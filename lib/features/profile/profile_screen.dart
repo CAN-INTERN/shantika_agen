@@ -87,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     SizedBox(height: spacing4),
                     _menuItem(
-                      svgIcon: 'assets/icons/notif.svg',
+                      svgIcon: 'assets/icons/notification.svg',
                       text: "Notifikasi",
                       onTap: () {
                         ScaffoldMessenger.of(context).showSnackBar(
