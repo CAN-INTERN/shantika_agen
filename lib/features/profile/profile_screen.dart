@@ -3,6 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shantika_agen/features/profile/about%20us/about_us_screen.dart';
+import 'package:shantika_agen/features/profile/faq/faq_screen.dart';
+import 'package:shantika_agen/features/profile/notification/notification_screen.dart';
+import 'package:shantika_agen/features/profile/personal%20information/personal_information.dart';
+import 'package:shantika_agen/features/profile/privacy_policy/privacy_policy_screen.dart';
+import 'package:shantika_agen/features/profile/review/rating_screen.dart';
+import 'package:shantika_agen/features/profile/terms%20and%20condition/terms_condition_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../ui/color.dart';
 import '../../ui/dimension.dart';
@@ -76,10 +83,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       svgIcon: 'assets/icons/profile_outline.svg',
                       text: "Informasi Pribadi",
                       onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Informasi Pribadi - Coming Soon'),
-                            backgroundColor: black750,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PersonalInformation(),
                           ),
                         );
                       },
@@ -90,10 +97,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       svgIcon: 'assets/icons/notif.svg',
                       text: "Notifikasi",
                       onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Notifikasi - Coming Soon'),
-                            backgroundColor: black750,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NotificationScreen(),
                           ),
                         );
                       },
@@ -107,10 +114,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       svgIcon: 'assets/icons/info.svg',
                       text: "Tentang Kami",
                       onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Tentang Kami - Coming Soon'),
-                            backgroundColor: black750,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AboutUsScreen(),
                           ),
                         );
                       },
@@ -121,10 +128,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       svgIcon: 'assets/icons/check.svg',
                       text: "Kebijakan Privasi",
                       onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Kebijakan Privasi - Coming Soon'),
-                            backgroundColor: black750,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PrivacyPolicyScreen(),
                           ),
                         );
                       },
@@ -135,10 +142,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       svgIcon: 'assets/icons/note.svg',
                       text: "Syarat dan Ketentuan",
                       onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Syarat dan Ketentuan - Coming Soon'),
-                            backgroundColor: black750,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TermsConditionScreen(),
                           ),
                         );
                       },
@@ -149,10 +156,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       svgIcon: 'assets/icons/faq.svg',
                       text: "FAQ",
                       onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('FAQ - Coming Soon'),
-                            backgroundColor: black750,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FaqScreen(),
                           ),
                         );
                       },
@@ -265,10 +272,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _ratingAgenCard() {
     return InkWell(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Rating Agen - Coming Soon'),
-            backgroundColor: black750,
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RatingScreen(),
           ),
         );
       },
