@@ -3,6 +3,7 @@
 *.log
 *.pyc
 *.swp
+*.env
 .DS_Store
 .atom/
 .build/
@@ -46,4 +47,11 @@ app.*.map.json
 
 # .env files
 *.env
+.env
 env.g.dart
+
+# keystore files
+key.properties
+keystore.jks
+
+*.g.dart
