@@ -3,6 +3,8 @@ import 'package:shantika_agen/ui/color.dart';
 import 'package:shantika_agen/ui/shared_widget/custom_button.dart';
 import 'package:shantika_agen/ui/typography.dart';
 
+import '../deposit/deposit_detail_screen.dart';
+
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
 
@@ -88,8 +90,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     ],
                   ),
                   CustomButton(
-                      onPressed: () {},
-                      backgroundColor: black00,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DepositDetailScreen(),
+                          ),
+                        );
+                      },                      backgroundColor: black00,
                       width: 95,
                       height: 35,
                       child: Text(

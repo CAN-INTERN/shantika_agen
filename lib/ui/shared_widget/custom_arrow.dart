@@ -8,7 +8,10 @@ class CustomArrow extends StatelessWidget {
   final VoidCallback? onBack;
   final Color iconColor;
   final Color textColor;
+  final TextStyle? titleStyle;
   final Widget? suffixIcon;
+  final EdgeInsetsGeometry? padding;
+  final double iconSize;
 
   const CustomArrow({
     Key? key,
@@ -16,17 +19,21 @@ class CustomArrow extends StatelessWidget {
     this.onBack,
     this.iconColor = black950,
     this.textColor = black950,
+    this.titleStyle,
     this.suffixIcon,
+    this.padding,
+    this.iconSize = 18,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(
-        left: 10,
-        top: 30,
-        right: 30,
-      ),
+      padding: padding ??
+          EdgeInsets.only(
+            left: 10,
+            top: 30,
+            right: 30,
+          ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -37,12 +44,15 @@ class CustomArrow extends StatelessWidget {
                 icon: Icon(
                   Icons.arrow_back_ios_new_rounded,
                   color: iconColor,
-                  size: 18,
+                  size: iconSize,
                 ),
               ),
               if (title != null) ...[
                 SizedBox(width: 6),
-                Text(title!, style: xlSemiBold),
+                Text(
+                  title!,
+                  style: titleStyle ?? xlSemiBold.copyWith(color: textColor),
+                ),
               ],
             ],
           ),
