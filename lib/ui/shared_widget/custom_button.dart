@@ -3,6 +3,11 @@ import '../color.dart';
 import '../dimension.dart';
 import '../typography.dart';
 
+import 'package:flutter/material.dart';
+import '../color.dart';
+import '../dimension.dart';
+import '../typography.dart';
+
 class CustomButton extends StatelessWidget {
   final Widget child;
   final VoidCallback? onPressed;
@@ -17,8 +22,10 @@ class CustomButton extends StatelessWidget {
   final Border? border;
   final Color? borderColor;
   final double? width;
+  final double? height;
   final EdgeInsetsGeometry? padding;
   final double borderRadius;
+  final List<BoxShadow>? boxShadow;
 
   const CustomButton({
     Key? key,
@@ -35,8 +42,10 @@ class CustomButton extends StatelessWidget {
     this.borderColor,
     this.disabledColor = bgDisabled,
     this.width,
+    this.height,
     this.padding,
     this.borderRadius = borderRadius300,
+    this.boxShadow,
   }) : super(key: key);
 
   @override
@@ -48,6 +57,7 @@ class CustomButton extends StatelessWidget {
       ),
       child: Container(
         width: width,
+        height: height,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
           border: border ??
@@ -57,6 +67,7 @@ class CustomButton extends StatelessWidget {
                 width: 1,
               )
                   : null),
+          boxShadow: boxShadow,
         ),
         child: Material(
           color: onPressed != null ? backgroundColor : disabledColor,
