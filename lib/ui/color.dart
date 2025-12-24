@@ -294,6 +294,7 @@ const Color borderFormDefault = Color(0xFFE4E4E7);
 const Color borderFormDanger = Color(0xFFD64026);
 const Color borderSelectField = Color(0x14030712);
 const Color borderTable = Color(0xA0A0A0A);
+const Color tosca = Color(0xFF33A2A9);
 
 /// Jacarta
 const Color jacarta50 = Color(0xFFf0f0f9);

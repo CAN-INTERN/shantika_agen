@@ -39,7 +39,8 @@ class CustomTextFormField extends StatelessWidget {
         this.readOnly,
         this.suffixIconConstraints,
         this.subtitleSection,
-        this.verticalContentPadding});
+        this.verticalContentPadding,
+        this.width});
 
   final String? titleSection;
   final bool isRequired;
@@ -71,6 +72,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final bool? readOnly;
   final double? verticalContentPadding;
+  final double? width;
 
   @override
   Widget build(BuildContext context) {
@@ -79,66 +81,69 @@ class CustomTextFormField extends StatelessWidget {
       controller.text = defaultValue ?? "";
     }
 
-    return CustomFormField(
-      titleSectionWidget: titleSection != null
-          ? RichText(
-        text: TextSpan(
-          text: titleSection,
-          style: smMedium.copyWith(color: black700_70),
-          children: isRequired
-              ? [
-            TextSpan(
-              text: ' *',
-              style: smMedium.copyWith(color: textPrimary),
-            )
-          ]
-              : [],
+    return SizedBox(
+      width: width,
+      child: CustomFormField(
+        titleSectionWidget: titleSection != null
+            ? RichText(
+          text: TextSpan(
+            text: titleSection,
+            style: smMedium.copyWith(color: black700_70),
+            children: isRequired
+                ? [
+              TextSpan(
+                text: ' *',
+                style: smMedium.copyWith(color: textPrimary),
+              )
+            ]
+                : [],
+          ),
+        )
+            : null,
+        helper: helper,
+        helperText: helperText,
+        child: TextFormField(
+          readOnly: readOnly ?? false,
+          onTap: onTap,
+          textInputAction: textInputAction ?? TextInputAction.next,
+          controller: controller,
+          focusNode: focusNode,
+          keyboardType: keyboardType,
+          obscureText: obsecureText ?? false,
+          style: inputStyle,
+          enabled: enabled,
+          maxLines: maxLines,
+          minLines: minLines,
+          onFieldSubmitted: onSubmit,
+          inputFormatters: inputFormatters,
+          decoration: inputDecoration().copyWith(
+            contentPadding: EdgeInsets.symmetric(
+                horizontal: space400, vertical: verticalContentPadding ?? 0),
+            hintStyle: const TextStyle(
+                color: textNeutralSecondary, fontWeight: FontWeight.w400),
+            suffixIcon: suffixIcon,
+            prefixText: prefixText,
+            prefixStyle: const TextStyle(color: textButtonOutlined),
+            prefix: prefix,
+            prefixIcon: prefixIcon,
+            prefixIconConstraints:
+            const BoxConstraints(minHeight: 20, minWidth: 20),
+            hintText: placeholder,
+            suffixIconConstraints: suffixIconConstraints,
+            errorText: validator == null ? null : errorText,
+            enabled: true,
+          ),
+          validator: (input) {
+            if (validator != null) {
+              return validator!(input!);
+            }
+            return null;
+          },
+          onChanged: onChanged,
+          onTapOutside: (event) {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
         ),
-      )
-          : null,
-      helper: helper,
-      helperText: helperText,
-      child: TextFormField(
-        readOnly: readOnly ?? false,
-        onTap: onTap,
-        textInputAction: textInputAction ?? TextInputAction.next,
-        controller: controller,
-        focusNode: focusNode,
-        keyboardType: keyboardType,
-        obscureText: obsecureText ?? false,
-        style: inputStyle,
-        enabled: enabled,
-        maxLines: maxLines,
-        minLines: minLines,
-        onFieldSubmitted: onSubmit,
-        inputFormatters: inputFormatters,
-        decoration: inputDecoration().copyWith(
-          contentPadding: EdgeInsets.symmetric(
-              horizontal: space400, vertical: verticalContentPadding ?? 0),
-          hintStyle: const TextStyle(
-              color: textNeutralSecondary, fontWeight: FontWeight.w400),
-          suffixIcon: suffixIcon,
-          prefixText: prefixText,
-          prefixStyle: const TextStyle(color: textButtonOutlined),
-          prefix: prefix,
-          prefixIcon: prefixIcon,
-          prefixIconConstraints:
-          const BoxConstraints(minHeight: 20, minWidth: 20),
-          hintText: placeholder,
-          suffixIconConstraints: suffixIconConstraints,
-          errorText: validator == null ? null : errorText,
-          enabled: true,
-        ),
-        validator: (input) {
-          if (validator != null) {
-            return validator!(input!);
-          }
-          return null;
-        },
-        onChanged: onChanged,
-        onTapOutside: (event) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
       ),
     );
   }
