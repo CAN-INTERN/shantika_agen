@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shantika_agen/ui/color.dart';
+import 'package:shantika_agen/ui/dimension.dart';
+import 'package:shantika_agen/ui/typography.dart';
+
+import '../../../ui/shared_widget/show_toast.dart';
 
 class PersonalInformation extends StatelessWidget {
   const PersonalInformation({super.key});
@@ -6,57 +12,44 @@ class PersonalInformation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: black00,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: black00,
         elevation: 0,
-        surfaceTintColor: Colors.white,
+        surfaceTintColor: black00,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: black950),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "Perbarui Profil",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
+          style: xlBold,
         ),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: EdgeInsets.all(padding20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 8),
-              // Profile Section
+              SizedBox(height: space200),
               _buildProfileSection(context),
-              SizedBox(height: 32),
-
-              // Email Field
+              SizedBox(height: space800),
               _buildTextField(
                 label: "Email",
                 value: "kkaylanasywa@gmail.com",
               ),
-              SizedBox(height: 20),
-
-              // Phone Field
+              SizedBox(height: spacing6),
               _buildTextField(
                 label: "Nomor Telepon",
                 value: "+6281234567994",
               ),
-              SizedBox(height: 20),
-
-              // Gender Field
+              SizedBox(height: spacing6),
               _buildTextField(
                 label: "Jenis Kelamin",
                 value: "Pria",
               ),
-              SizedBox(height: 20),
-
-              // Address Field
+              SizedBox(height: spacing6),
               _buildTextField(
                 label: "Alamat Lengkap",
                 value: "Semarang",
@@ -74,24 +67,19 @@ class PersonalInformation extends StatelessWidget {
       children: [
         Stack(
           children: [
-            // Avatar
             CircleAvatar(
               radius: 50,
-              backgroundColor: Colors.grey[300],
-              backgroundImage: NetworkImage(
-                'assets/images/img_eunsoo.jpeg',
-              ),
+              backgroundColor: black300,
+              backgroundImage: AssetImage('assets/images/img_eunsoo.jpeg'),
             ),
-            // Overlay gelap
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
+                  color: black950.withOpacity(0.3),
                   shape: BoxShape.circle,
                 ),
               ),
             ),
-            // Camera icon
             Positioned.fill(
               child: Center(
                 child: GestureDetector(
@@ -99,50 +87,39 @@ class PersonalInformation extends StatelessWidget {
                     _showImagePickerBottomSheet(context);
                   },
                   child: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: EdgeInsets.all(padding12),
                     decoration: BoxDecoration(
                       color: Colors.transparent,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      Icons.camera_alt,
-                      size: 28,
-                      color: Colors.white,
-                    ),
+                    child: SvgPicture.asset('assets/icons/ic_camera_outline.svg'),
                   ),
                 ),
               ),
             ),
           ],
         ),
-        SizedBox(width: 16),
+        SizedBox(width: spacing5),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "JEPARA, JEPARA",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
+                style: mdSemiBold,
               ),
-              SizedBox(height: 6),
+              SizedBox(height: space150),
               Row(
                 children: [
                   Text(
                     "Agen Terverifikasi",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
+                    style: smMedium.copyWith(color: black700_70),
                   ),
-                  SizedBox(width: 4),
+                  SizedBox(width: space100),
                   Icon(
                     Icons.verified,
-                    size: 16,
-                    color: Colors.blue,
+                    size: iconS,
+                    color: blue400,
                   ),
                 ],
               ),
@@ -163,33 +140,26 @@ class PersonalInformation extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: Colors.black87,
-          ),
+          style: smMedium,
         ),
-        SizedBox(height: 8),
+        SizedBox(height: space200),
         Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(
-            horizontal: 16,
+            horizontal: padding16,
             vertical: maxLines > 1 ? 16 : 14,
           ),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
+            color: black00,
+            borderRadius: BorderRadius.circular(space200),
             border: Border.all(
-              color: Colors.grey[300]!,
+              color: black300!,
               width: 1,
             ),
           ),
           child: Text(
             value,
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.black,
-            ),
+            style: mdMedium,
             maxLines: maxLines,
           ),
         ),
@@ -198,123 +168,97 @@ class PersonalInformation extends StatelessWidget {
   }
 
   void _showImagePickerBottomSheet(BuildContext context) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (bottomSheetContext) {
-        return Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'Pilih dari',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
+      builder: (dialogContext) {
+        return Dialog(
+          backgroundColor: black400,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius500),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(space800),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Pilih',
+                  style: xlBold.copyWith(color: black00),
                 ),
-              ),
-              SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(bottomSheetContext);
-                      // Implement camera picker
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Camera selected')),
-                      );
-                    },
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.camera_alt, size: 40, color: Colors.black87),
-                          SizedBox(height: 8),
-                          Text(
-                            'Camera',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
+                SizedBox(height: space1000),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildImageOption(
+                      context: context,
+                      bottomSheetContext: dialogContext,
+                      icon: Icons.camera_alt,
+                      label: 'Kamera',
+                      onTap: () {
+                        Navigator.pop(dialogContext);
+                        CustomToast.showSuccess(context, 'Kamera dipilih');
+                      },
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(bottomSheetContext);
-                      // Implement gallery picker
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Gallery selected')),
-                      );
-                    },
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.photo_library, size: 40, color: Colors.black87),
-                          SizedBox(height: 8),
-                          Text(
-                            'Gallery',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ],
-                      ),
+                    _buildImageOption(
+                      context: context,
+                      bottomSheetContext: dialogContext,
+                      icon: Icons.image,
+                      label: 'Galeri',
+                      onTap: () {
+                        Navigator.pop(dialogContext);
+                        CustomToast.showSuccess(context, 'Galeri dipilih');
+                      },
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(bottomSheetContext),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Cancel',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
+                  ],
+                ),
+                SizedBox(height: space800),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(dialogContext),
+                    child: Text(
+                      'BATAL',
+                      style: mdSemiBold.copyWith(color: primaryColor),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildImageOption({
+    required BuildContext context,
+    required BuildContext bottomSheetContext,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            child: Icon(
+              icon,
+              size: iconXXL,
+              color: black600,
+            ),
+          ),
+          SizedBox(height: space100),
+          Text(
+            label,
+            style: mdMedium.copyWith(color: black300),
+          ),
+        ],
+      ),
     );
   }
 }

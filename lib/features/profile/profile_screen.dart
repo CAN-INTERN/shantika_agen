@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   Text(name, style: lgBold),
                   SizedBox(width: spacing3),
-                  Icon(Icons.star, color: Colors.amber, size: iconL),
+                  SvgPicture.asset('assets/icons/ic_rate_filled.svg', width: iconL),
                   SizedBox(width: space050),
                   Text('$rating', style: lgBold),
                 ],
@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   children: [
                     _menuItem(
-                      svgIcon: 'assets/icons/profile_outline.svg',
+                      svgIcon: 'assets/icons/id_profile_person.svg',
                       text: "Informasi Pribadi",
                       onTap: () {
                         Navigator.push(
@@ -94,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     SizedBox(height: spacing4),
                     _menuItem(
-                      svgIcon: 'assets/icons/notif.svg',
+                      svgIcon: 'assets/icons/ic_notify.svg',
                       text: "Notifikasi",
                       onTap: () {
                         Navigator.push(
@@ -111,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     SizedBox(height: spacing4),
                     _menuItem(
-                      svgIcon: 'assets/icons/info.svg',
+                      svgIcon: 'assets/icons/ic_information.svg',
                       text: "Tentang Kami",
                       onTap: () {
                         Navigator.push(
@@ -125,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     SizedBox(height: spacing4),
                     _menuItem(
-                      svgIcon: 'assets/icons/check.svg',
+                      svgIcon: 'assets/icons/ic_privacy_policy.svg',
                       text: "Kebijakan Privasi",
                       onTap: () {
                         Navigator.push(
@@ -139,7 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     SizedBox(height: spacing4),
                     _menuItem(
-                      svgIcon: 'assets/icons/note.svg',
+                      svgIcon: 'assets/icons/id_terms_condition.svg',
                       text: "Syarat dan Ketentuan",
                       onTap: () {
                         Navigator.push(
@@ -153,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     SizedBox(height: spacing4),
                     _menuItem(
-                      svgIcon: 'assets/icons/faq.svg',
+                      svgIcon: 'assets/icons/ic_faq.svg',
                       text: "FAQ",
                       onTap: () {
                         Navigator.push(
@@ -180,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }
 
                         return _menuItem(
-                          svgIcon: 'assets/icons/stars.svg',
+                          svgIcon: 'assets/icons/ic_rate_filled.svg',
                           text: "Beri Nilai App Kami",
                           trailing: Text(
                             versionText,
@@ -285,8 +285,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFF4DB8C4),
-              Color(0xFF3A9CA7),
+              blue600,
+              blue700,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -302,7 +302,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 shape: BoxShape.circle,
               ),
               child: SvgPicture.asset(
-                width: 30,
+                width: 20,
+                height: 20,
                 'assets/icons/ic_rate_filled.svg',
                 colorFilter: ColorFilter.mode(
                   black00,
@@ -436,23 +437,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Image.network(
                       imageUrl,
                       fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          padding: EdgeInsets.all(padding20),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.error_outline,
-                                  color: red600, size: 60),
-                              SizedBox(height: spacing4),
-                              Text(
-                                'Gagal memuat gambar',
-                                style: mdMedium.copyWith(color: black00),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
                     ),
                   ),
                 ),

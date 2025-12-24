@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:shantika_agen/ui/color.dart';
 import 'package:shantika_agen/ui/dimension.dart';
@@ -123,19 +124,29 @@ class ChatScreen extends StatelessWidget {
                 ],
               ),
             ),
+            // Bottom blur button
             Positioned(
               bottom: 0,
               left: 0,
               right: 0,
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: padding12),
-                decoration: BoxDecoration(
-                  color: black00.withOpacity(0.5),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(16),
+                  bottomRight: Radius.circular(16),
                 ),
-                child: Center(
-                  child: Text(
-                    'Chat Sekarang',
-                    style: lgMedium.copyWith(color: black00),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: padding12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Chat Sekarang',
+                        style: lgMedium.copyWith(color: black00),
+                      ),
+                    ),
                   ),
                 ),
               ),
