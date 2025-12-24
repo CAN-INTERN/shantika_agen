@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shantika_agen/config/user_preference.dart';
+import 'package:shantika_agen/repository/about_us_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/api/api_service.dart';
+import '../repository/chat_repository.dart';
 import '../utility/auth_interceptor.dart';
 import 'constant.dart';
 import 'env/env.dart';
@@ -60,9 +62,13 @@ Future<void> setUpLocator(GlobalKey<NavigatorState> navigatorKey) async {
   //       () => NotificationRepository(serviceLocator<ApiService>()),
   // );
   //
-  // serviceLocator.registerLazySingleton<ChatRepository>(
-  //       () => ChatRepository(serviceLocator<ApiService>()),
-  // );
+  serviceLocator.registerLazySingleton<ChatRepository>(
+        () => ChatRepository(serviceLocator<ApiService>()),
+  );
+
+  serviceLocator.registerLazySingleton<AboutUsRepository>(
+        () => AboutUsRepository(serviceLocator<ApiService>()),
+  );
   //
   // serviceLocator.registerLazySingleton<HomeRepository>(
   //       () => HomeRepository(serviceLocator<ApiService>()),
