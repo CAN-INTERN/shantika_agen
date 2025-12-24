@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shantika_agen/features/chat/cubit/chat_cubit.dart';
+import 'package:shantika_agen/features/profile/about%20us/cubit/about_us_cubit.dart';
+import 'package:shantika_agen/repository/about_us_repository.dart';
+import 'package:shantika_agen/repository/chat_repository.dart';
 import 'package:shantika_agen/splash_screen.dart';
 import 'package:shantika_agen/ui/theme.dart';
 import 'config/service_locator.dart';
@@ -27,6 +31,11 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) => LoginCubit()),
         BlocProvider(create: (context) => UpdateFcmTokenCubit()),
+        
+        /// Chat
+        BlocProvider(create: (context) => ChatCubit(serviceLocator<ChatRepository>())),
+        BlocProvider(create: (context) => AboutUsCubit(serviceLocator<AboutUsRepository>())),
+
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -1,136 +1,235 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:shantika_agen/ui/color.dart';
+import 'package:shantika_agen/ui/dimension.dart';
+import 'package:shantika_agen/ui/typography.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'cubit/about_us_cubit.dart';
+import 'cubit/about_us_state.dart';
 
-class AboutUsScreen extends StatelessWidget {
+class AboutUsScreen extends StatefulWidget {
   const AboutUsScreen({super.key});
+
+  @override
+  State<AboutUsScreen> createState() => _AboutUsScreenState();
+}
+
+class _AboutUsScreenState extends State<AboutUsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AboutUsCubit>().fetchAboutUs();
+  }
+
+  Future<void> _launchUrl(String url) async {
+    try {
+      final Uri uri = Uri.parse(url);
+
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Tidak dapat membuka link')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: black00,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: black00,
         elevation: 0,
-        surfaceTintColor: Colors.white,
+        surfaceTintColor: black00,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: black950),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "Tentang Kami",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
+          style: xlBold,
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: 24),
-              // Title
-              Text(
-                "Agen 2.0",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                ),
-              ),
-              SizedBox(height: 40),
-              // Bus Image
-              Image.network(
-                'https://via.placeholder.com/350x200/808080/FFFFFF?text=Bus+Image',
-                width: double.infinity,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    height: 200,
-                    color: Colors.grey[200],
-                    child: Center(
-                      child: Icon(
-                        Icons.directions_bus,
-                        size: 80,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                  );
-                },
-              ),
-              SizedBox(height: 40),
-              // Social Media Icons
-              Row(
+      body: BlocBuilder<AboutUsCubit, AboutUsState>(
+        builder: (context, state) {
+          if (state is AboutUsLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (state is AboutUsError) {
+            return Center(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildSocialMediaButton(
-                    icon: Icons.camera_alt,
-                    onTap: () {
-                      // Handle Instagram
-                    },
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: red600,
                   ),
-                  SizedBox(width: 24),
-                  _buildSocialMediaButton(
-                    icon: Icons.email,
-                    onTap: () {
-                      // Handle Email
-                    },
+                  SizedBox(height: spacing5),
+                  Text(
+                    state.message,
+                    style: smMedium,
+                    textAlign: TextAlign.center,
                   ),
-                  SizedBox(width: 24),
-                  _buildSocialMediaButton(
-                    icon: Icons.facebook,
-                    onTap: () {
-                      // Handle Facebook
+                  SizedBox(height: space600),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<AboutUsCubit>().fetchAboutUs();
                     },
+                    child: Text('Coba Lagi'),
                   ),
                 ],
               ),
-              SizedBox(height: 32),
-              // Address
-              Text(
-                "Jl. Kudus-Jepara KM 9 Desa Papringan\nKecamatan Kaliwungu Kabupaten Kudus\nJawa Tengah 59361",
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                  height: 1.6,
+            );
+          }
+
+          if (state is AboutUsLoaded) {
+            final about = state.about;
+
+            return RefreshIndicator(
+              onRefresh: () => context.read<AboutUsCubit>().refreshAboutUs(),
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.all(padding20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: space600),
+                      Text(
+                        "Agen 2.0",
+                        style: xlBold,
+                      ),
+                      SizedBox(height: space1000),
+                      Image.network(
+                        about.image,
+                        width: double.infinity,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 200,
+                            color: black300,
+                            child: Center(
+                              child: Icon(
+                                Icons.directions_bus,
+                                size: 80,
+                                color: black300,
+                              ),
+                            ),
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            height: 200,
+                            color: black300,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: space600),
+                      if (about.description.isNotEmpty)
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: padding16),
+                          child: Text(
+                            about.description,
+                            style: smMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      SizedBox(height: space1000),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _socialMediaButton(
+                            svgAsset: 'assets/icons/ic_instagram.svg',
+                            onTap: () => _launchUrl('https://instagram.com'),
+                          ),
+                          SizedBox(width: space1200),
+                          _socialMediaButton(
+                            svgAsset: 'assets/icons/ic_email.svg',
+                            onTap: () => _launchUrl('mailto:info@newshantika.com'),
+                          ),
+                          SizedBox(width: space1200),
+                          _socialMediaButton(
+                            svgAsset: 'assets/icons/ic_facebook.svg',
+                            onTap: () => _launchUrl('https://newshantika.com'),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: space600),
+                      Text(
+                        about.address,
+                        style: mdMedium.copyWith(color: black750),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
-            ],
-          ),
-        ),
+            );
+          }
+
+          return Center(
+            child: Text('Tidak ada data'),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildSocialMediaButton({
-    required IconData icon,
-    required VoidCallback onTap,
+  Widget _socialMediaButton({
+    required String svgAsset,
+    required VoidCallback onTap
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(100),
+      borderRadius: BorderRadius.circular(borderRadius300),
       child: Container(
-        width: 56,
-        height: 56,
+        width: 45,
+        height: 45,
         decoration: BoxDecoration(
-          color: Color(0xFF1E3A8A), // Navy blue
+          color: primaryColor,
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: black950.withOpacity(0.1),
               blurRadius: 8,
               offset: Offset(0, 4),
             ),
           ],
         ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: 28,
+        child: Center(
+          child: SvgPicture.asset(
+            svgAsset,
+            width: iconL,
+            height: iconL,
+            colorFilter: ColorFilter.mode(black00, BlendMode.srcIn),
+          ),
         ),
       ),
     );
