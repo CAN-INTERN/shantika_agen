@@ -6,6 +6,9 @@ import 'package:get_it/get_it.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shantika_agen/config/user_preference.dart';
 import 'package:shantika_agen/repository/about_us_repository.dart';
+import 'package:shantika_agen/repository/faq_repository.dart';
+import 'package:shantika_agen/repository/privacy_policy_repository.dart';
+import 'package:shantika_agen/repository/terms_condition_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/api/api_service.dart';
 import '../repository/chat_repository.dart';
@@ -53,15 +56,7 @@ Future<void> setUpLocator(GlobalKey<NavigatorState> navigatorKey) async {
       baseUrl: baseApi,
     ),
   );
-  //
-  // serviceLocator.registerLazySingleton<AppSettingsRepository>(
-  //       () => AppSettingsRepository(serviceLocator<ApiService>()),
-  // );
-  //
-  // serviceLocator.registerLazySingleton<NotificationRepository>(
-  //       () => NotificationRepository(serviceLocator<ApiService>()),
-  // );
-  //
+
   serviceLocator.registerLazySingleton<ChatRepository>(
         () => ChatRepository(serviceLocator<ApiService>()),
   );
@@ -69,30 +64,18 @@ Future<void> setUpLocator(GlobalKey<NavigatorState> navigatorKey) async {
   serviceLocator.registerLazySingleton<AboutUsRepository>(
         () => AboutUsRepository(serviceLocator<ApiService>()),
   );
-  //
-  // serviceLocator.registerLazySingleton<HomeRepository>(
-  //       () => HomeRepository(serviceLocator<ApiService>()),
-  // );
-  //
-  // serviceLocator.registerLazySingleton<TicketRepository>(
-  //       () => TicketRepository(serviceLocator<ApiService>()),
-  // );
-  //
-  // serviceLocator.registerLazySingleton<InfoAgencyRepository>(
-  //       () => InfoAgencyRepository(serviceLocator<ApiService>()),
-  // );
-  //
-  // serviceLocator.registerLazySingleton<SocialMediaRepository>(
-  //       () => SocialMediaRepository(serviceLocator<ApiService>()),
-  // );
-  //
-  // serviceLocator.registerLazySingleton<OrderRepository>(
-  //       () => OrderRepository(serviceLocator<ApiService>()),
-  // );
-  //
-  // serviceLocator.registerLazySingleton<MembershipRepository>(
-  //       () => MembershipRepository(serviceLocator<ApiService>()),
-  // );
+
+  serviceLocator.registerLazySingleton<FaqRepository>(
+        () => FaqRepository(serviceLocator<ApiService>()),
+  );
+
+  serviceLocator.registerLazySingleton<TermsConditionRepository>(
+        () => TermsConditionRepository(serviceLocator<ApiService>()),
+  );
+
+  serviceLocator.registerLazySingleton<PrivacyPolicyRepository>(
+        () => PrivacyPolicyRepository(serviceLocator<ApiService>()),
+  );
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   serviceLocator.registerSingleton<PackageInfo>(packageInfo);

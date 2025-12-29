@@ -1,133 +1,191 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:shantika_agen/ui/color.dart';
+import 'package:shantika_agen/ui/dimension.dart';
+import 'package:shantika_agen/ui/typography.dart';
+import 'cubit/terms_condition_cubit.dart';
+import 'cubit/terms_condition_state.dart';
 
-class TermsConditionScreen extends StatelessWidget {
+class TermsConditionScreen extends StatefulWidget {
   const TermsConditionScreen({super.key});
+
+  @override
+  State<TermsConditionScreen> createState() => _TermsConditionScreenState();
+}
+
+class _TermsConditionScreenState extends State<TermsConditionScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<TermsConditionCubit>().fetchTermsCondition();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: black00,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: black00,
         elevation: 0,
-        surfaceTintColor: Colors.white,
+        surfaceTintColor: black00,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: black950),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "Syarat Dan Ketentuan",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
+          style: xlBold,
         ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Main Title
-            Text(
-              "Syarat & Ketentuan Penggunaan Aplikasi",
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 20),
+      body: BlocBuilder<TermsConditionCubit, TermsConditionState>(
+        builder: (context, state) {
+          if (state is TermsConditionLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-            // Big centered title
-            Center(
-              child: Text(
-                "KEBIJAKAN PRIVASI APLIKASI\nSHANTIKA BUS",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                  height: 1.4,
+          if (state is TermsConditionError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: red600,
+                    ),
+                    SizedBox(height: padding16),
+                    Text(
+                      state.message,
+                      style: smMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: space600),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        context.read<TermsConditionCubit>().fetchTermsCondition();
+                      },
+                      icon: Icon(Icons.refresh),
+                      label: Text('Coba Lagi'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: black700_70,
+                        foregroundColor: black00,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: paddingL,
+                          vertical: padding12,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                textAlign: TextAlign.center,
               ),
-            ),
-            SizedBox(height: 24),
+            );
+          }
 
-            // Last updated
-            Text(
-              "Terakhir diperbarui: 11 April 2025",
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Colors.black87,
-              ),
-            ),
-            SizedBox(height: 24),
+          if (state is TermsConditionLoaded) {
+            final data = state.termsCondition;
 
-            // Section: PENDAHULUAN
-            Text(
-              "PENDAHULUAN",
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 16),
+            return RefreshIndicator(
+              onRefresh: () =>
+                  context.read<TermsConditionCubit>().refreshTermsCondition(),
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.all(padding20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data.name,
+                      style: smMedium,
+                    ),
+                    SizedBox(height: 20),
+                    HtmlWidget(
+                      data.content,
+                      customStylesBuilder: (element) {
+                        if (element.localName == 'h1') {
+                          return {
+                            'color': '#000000',
+                            'font-size': '18px',
+                            'font-weight': '700',
+                            'margin-bottom': '16px',
+                            'text-align': 'center',
+                          };
+                        }
+                        if (element.localName == 'h2') {
+                          return {
+                            'color': '#000000',
+                            'font-size': '17px',
+                            'font-weight': '700',
+                            'margin-top': '24px',
+                            'margin-bottom': '16px',
+                          };
+                        }
+                        if (element.localName == 'p') {
+                          return {
+                            'color': '#000000DD',
+                            'font-size': '14px',
+                            'line-height': '1.6',
+                            'text-align': 'justify',
+                            'margin-bottom': '16px',
+                          };
+                        }
+                        if (element.localName == 'ul' || element.localName == 'ol') {
+                          return {
+                            'margin-left': '20px',
+                            'margin-bottom': '16px',
+                          };
+                        }
+                        if (element.localName == 'li') {
+                          return {
+                            'color': '#000000DD',
+                            'font-size': '14px',
+                            'line-height': '1.6',
+                            'margin-bottom': '8px',
+                          };
+                        }
+                        return null;
+                      },
+                      textStyle: mdMedium,
+                    ),
 
-            // Content paragraph 1
-            Text(
-              "Selamat datang di Shantika Bus. Kami menghargai kepercayaan yang Anda berikan kepada kami dan memahami pentingnya privasi Anda. Kebijakan Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan, mengungkapkan, dan melindungi informasi pribadi Anda ketika Anda menggunakan aplikasi Shantika Bus untuk pembelian tiket My New Shantika.",
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Colors.black87,
-                height: 1.6,
+                    SizedBox(height: space600),
+                    Text(
+                      'Terakhir diperbarui: ${_formatDate(data.updatedAt)}',
+                      style: xsMedium.copyWith(color: black700_70),
+                    ),
+                  ],
+                ),
               ),
-              textAlign: TextAlign.justify,
-            ),
-            SizedBox(height: 16),
+            );
+          }
 
-            // Content paragraph 2
-            Text(
-              "Dengan mengunduh, menginstal, atau menggunakan aplikasi Shantika Bus, Anda menyetujui praktik yang dijelaskan dalam Kebijakan Privasi ini. Jika Anda tidak setuju dengan Kebijakan Privasi ini, mohon jangan menggunakan aplikasi kami.",
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Colors.black87,
-                height: 1.6,
-              ),
-              textAlign: TextAlign.justify,
-            ),
-            SizedBox(height: 24),
-
-            // Section: INFORMASI YANG KAMI KUMPULKAN
-            Text(
-              "INFORMASI YANG KAMI KUMPULKAN",
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 16),
-
-            // More content would continue here...
-            Text(
-              "Kami mengumpulkan berbagai jenis informasi untuk memberikan dan meningkatkan layanan kami kepada Anda.",
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Colors.black87,
-                height: 1.6,
-              ),
-              textAlign: TextAlign.justify,
-            ),
-          ],
-        ),
+          return const Center(
+            child: Text('Tidak ada data'),
+          );
+        },
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    final months = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember'
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 }

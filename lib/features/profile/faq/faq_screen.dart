@@ -1,44 +1,127 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shantika_agen/ui/color.dart';
+import 'package:shantika_agen/ui/dimension.dart';
+import 'package:shantika_agen/ui/typography.dart';
+import 'cubit/faq_cubit.dart';
+import 'cubit/faq_state.dart';
 
-class FaqScreen extends StatelessWidget {
+class FaqScreen extends StatefulWidget {
   const FaqScreen({super.key});
+
+  @override
+  State<FaqScreen> createState() => _FaqScreenState();
+}
+
+class _FaqScreenState extends State<FaqScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<FaqCubit>().fetchFaqs();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: black00,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: black00,
         elevation: 0,
-        surfaceTintColor: Colors.white,
+        surfaceTintColor: black00,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: black950),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "FAQ",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
+          style: xlBold,
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              SizedBox(height: 8),
-              _buildFaqItem(
-                question:
-                "Bagaimana Cara Pemesanan Tiket Armada New Shantika Melalui Aplikasi?",
-                answer:
-                "Caranya mudah, Anda bisa melakukan pemesanan tiket dimana saja dan kapan saja. Cukup klik menu pesan tiket, lengkapi data, lakukan pembayaran. Setelah itu, Anda dapat melakukan perjalanan yang aman dan nyaman",
+      body: BlocBuilder<FaqCubit, FaqState>(
+        builder: (context, state) {
+          if (state is FaqLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (state is FaqError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: red600,
+                  ),
+                  SizedBox(height: spacing5),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: space800),
+                    child: Text(
+                      state.message,
+                      style: smMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(height: space600),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<FaqCubit>().fetchFaqs();
+                    },
+                    child: Text('Coba Lagi'),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            );
+          }
+
+          if (state is FaqLoaded) {
+            if (state.faqs.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.help_outline,
+                      size: iconXL,
+                      color: black700_70,
+                    ),
+                    SizedBox(height: spacing5),
+                    Text(
+                      'Tidak ada FAQ',
+                      style: mdMedium,
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () => context.read<FaqCubit>().refreshFaqs(),
+              child: ListView.builder(
+                padding: EdgeInsets.all(padding16),
+                itemCount: state.faqs.length,
+                itemBuilder: (context, index) {
+                  final faq = state.faqs[index];
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: index == state.faqs.length - 1 ? 0 : padding16,
+                    ),
+                    child: _buildFaqItem(
+                      question: faq.question,
+                      answer: faq.answer,
+                    ),
+                  );
+                },
+              ),
+            );
+          }
+
+          return Center(
+            child: Text('Tidak ada data'),
+          );
+        },
       ),
     );
   }
@@ -49,41 +132,31 @@ class FaqScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFF3D4C7E),
-        borderRadius: BorderRadius.circular(12),
+        color: primaryColor,
+        borderRadius: BorderRadius.circular(borderRadius300),
       ),
       child: Theme(
         data: ThemeData(
           dividerColor: Colors.transparent,
         ),
         child: ExpansionTile(
-          tilePadding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          tilePadding: const EdgeInsets.symmetric(horizontal: padding20, vertical: paddingS),
           childrenPadding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            bottom: 20,
+            left: padding20,
+            right: padding20,
+            bottom: padding20,
             top: 0,
           ),
           title: Text(
             question,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-              height: 1.4,
-            ),
+            style: smMedium.copyWith(color: black00),
           ),
-          iconColor: Colors.white,
-          collapsedIconColor: Colors.white,
+          iconColor: black00,
+          collapsedIconColor: black00,
           children: [
             Text(
               answer,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Colors.white,
-                height: 1.6,
-              ),
+              style: smMedium.copyWith(color: black00),
             ),
           ],
         ),

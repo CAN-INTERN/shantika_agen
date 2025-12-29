@@ -139,7 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     SizedBox(height: spacing4),
                     _menuItem(
-                      svgIcon: 'assets/icons/id_terms_condition.svg',
+                      svgIcon: 'assets/icons/ic_document.svg',
                       text: "Syarat dan Ketentuan",
                       onTap: () {
                         Navigator.push(
@@ -180,7 +180,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }
 
                         return _menuItem(
-                          svgIcon: 'assets/icons/ic_rate_filled.svg',
+                          svgIcon: 'assets/icons/ic_stars_black.svg',
                           text: "Beri Nilai App Kami",
                           trailing: Text(
                             versionText,
@@ -250,10 +250,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SvgPicture.asset(
               svgIcon,
               height: iconL,
-              colorFilter: ColorFilter.mode(
-                black950,
-                BlendMode.srcIn,
-              ),
             ),
             SizedBox(width: spacing4),
             Expanded(
