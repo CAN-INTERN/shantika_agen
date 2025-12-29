@@ -1,8 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shantika_agen/config/user_preferences.dart';
+import 'package:shantika_agen/features/authentication/login_screen.dart';
 import 'package:shantika_agen/features/profile/about%20us/about_us_screen.dart';
 import 'package:shantika_agen/features/profile/faq/faq_screen.dart';
 import 'package:shantika_agen/features/profile/notification/notification_screen.dart';
@@ -14,7 +15,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../ui/color.dart';
 import '../../ui/dimension.dart';
 import '../../ui/shared_widget/custom_button.dart';
-import '../../ui/shared_widget/custom_card.dart';
+import '../../ui/shared_widget/show_toast.dart';
 import '../../ui/typography.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -25,9 +26,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final String name = "Shin Eunsoo";
-  final int rating = 0;
-  final String? avatarUrl = null;
+  String get name => UserPreferences.userName ?? "User";
+  int get rating => 0;
+  String? get avatarUrl => UserPreferences.userPhoto;
 
   Future<String> getVersionInfo() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -378,14 +379,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(width: spacing4),
                     Expanded(
                       child: CustomButton(
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.pop(dialogContext);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Logout berhasil!'),
-                              backgroundColor: green400,
-                            ),
-                          );
+
+                          // ✅ Clear UserPreferences (hapus token & data)
+                          await UserPreferences.clearUserData();
+
+                          // ✅ Navigate to Login & clear stack
+                          if (context.mounted) {
+                            Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              ),
+                                  (route) => false,
+                            );
+                            CustomToast.showSuccess(
+                              context,
+                              'Logout berhasil!',
+                            );
+                          }
                         },
                         padding: EdgeInsets.symmetric(vertical: paddingS),
                         child: Text('Keluar'),

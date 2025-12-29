@@ -6,6 +6,7 @@ import 'package:shantika_agen/model/chat_model.dart';
 import 'package:shantika_agen/model/faq_model.dart';
 import 'package:shantika_agen/model/privacy_policy_model.dart';
 import 'package:shantika_agen/model/terms_condition_model.dart';
+import 'package:shantika_agen/model/user_model.dart'; // TAMBAH INI
 import '../../config/constant.dart';
 import '../../model/about_us_model.dart';
 
@@ -14,6 +15,14 @@ part 'api_service.g.dart';
 @RestApi(baseUrl: baseApi, parser: Parser.JsonSerializable)
 abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
+
+  /// Login Google
+  @POST("/agen/login/email")
+  Future<HttpResponse<UserModel>> loginWithEmail(@Body() Map<String, dynamic> body);
+
+ /// Login Phone
+  @POST("/agen/login/phone")
+  Future<HttpResponse<UserModel>> loginWithPhone(@Body() Map<String, dynamic> body);
 
   /// Chat
   @GET("/agen/chats")
