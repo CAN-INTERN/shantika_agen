@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shantika_agen/features/chat/cubit/chat_cubit.dart';
 import 'package:shantika_agen/features/profile/about%20us/cubit/about_us_cubit.dart';
+import 'package:shantika_agen/features/profile/faq/cubit/faq_cubit.dart';
+import 'package:shantika_agen/features/profile/privacy_policy/cubit/privacy_policy_cubit.dart';
+import 'package:shantika_agen/features/profile/terms%20and%20condition/cubit/terms_condition_cubit.dart';
 import 'package:shantika_agen/repository/about_us_repository.dart';
 import 'package:shantika_agen/repository/chat_repository.dart';
+import 'package:shantika_agen/repository/faq_repository.dart';
+import 'package:shantika_agen/repository/privacy_policy_repository.dart';
+import 'package:shantika_agen/repository/terms_condition_repository.dart';
 import 'package:shantika_agen/splash_screen.dart';
 import 'package:shantika_agen/ui/theme.dart';
 import 'config/service_locator.dart';
@@ -34,7 +40,12 @@ class MyApp extends StatelessWidget {
         
         /// Chat
         BlocProvider(create: (context) => ChatCubit(serviceLocator<ChatRepository>())),
+
+        ///Profile
         BlocProvider(create: (context) => AboutUsCubit(serviceLocator<AboutUsRepository>())),
+        BlocProvider(create: (context) => FaqCubit(serviceLocator<FaqRepository>())),
+        BlocProvider(create: (context) => TermsConditionCubit(serviceLocator<TermsConditionRepository>())),
+        BlocProvider(create: (context) => PrivacyPolicyCubit(serviceLocator<PrivacyPolicyRepository>())),
 
       ],
       child: MaterialApp(
