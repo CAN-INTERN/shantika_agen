@@ -8,39 +8,42 @@ import '../typography.dart';
 
 // ignore: must_be_immutable
 class CustomTextFormField extends StatelessWidget {
-  CustomTextFormField(
-      {super.key,
-        this.titleSection,
-        this.isRequired = false,
-        required this.controller,
-        this.keyboardType = TextInputType.text,
-        this.placeholder,
-        this.errorText,
-        this.prefixText,
-        this.focusNode,
-        this.obsecureText,
-        this.validator,
-        this.helper,
-        this.helperText,
-        this.onChanged,
-        this.onSubmit,
-        this.suffixIcon,
-        this.maxLines,
-        this.minLines,
-        this.defaultValue,
-        this.enabled,
-        this.hintColor,
-        this.onTap,
-        this.inputFormatters,
-        this.prefix,
-        this.textValidator,
-        this.prefixIcon,
-        this.textInputAction,
-        this.readOnly,
-        this.suffixIconConstraints,
-        this.subtitleSection,
-        this.verticalContentPadding,
-        this.width});
+  CustomTextFormField({
+    super.key,
+    this.titleSection,
+    this.isRequired = false,
+    required this.controller,
+    this.keyboardType = TextInputType.text,
+    this.placeholder,
+    this.errorText,
+    this.prefixText,
+    this.focusNode,
+    this.obsecureText,
+    this.validator,
+    this.helper,
+    this.helperText,
+    this.onChanged,
+    this.onSubmit,
+    this.suffixIcon,
+    this.maxLines,
+    this.minLines,
+    this.defaultValue,
+    this.enabled,
+    this.hintColor,
+    this.onTap,
+    this.inputFormatters,
+    this.prefix,
+    this.textValidator,
+    this.prefixIcon,
+    this.textInputAction,
+    this.readOnly,
+    this.suffixIconConstraints,
+    this.subtitleSection,
+    this.verticalContentPadding,
+    this.width,
+    this.titleStyle,
+    this.placeholderStyle,
+  });
 
   final String? titleSection;
   final bool isRequired;
@@ -74,6 +77,10 @@ class CustomTextFormField extends StatelessWidget {
   final double? verticalContentPadding;
   final double? width;
 
+  // New parameters for customization
+  final TextStyle? titleStyle;
+  final TextStyle? placeholderStyle;
+
   @override
   Widget build(BuildContext context) {
     final inputStyle = smMedium.copyWith(color: black700_70);
@@ -88,12 +95,12 @@ class CustomTextFormField extends StatelessWidget {
             ? RichText(
           text: TextSpan(
             text: titleSection,
-            style: smMedium.copyWith(color: black700_70),
+            style: titleStyle ?? smMedium.copyWith(color: black700_70),
             children: isRequired
                 ? [
               TextSpan(
                 text: ' *',
-                style: smMedium.copyWith(color: textPrimary),
+                style: titleStyle ?? smMedium.copyWith(color: textPrimary),
               )
             ]
                 : [],
@@ -119,8 +126,9 @@ class CustomTextFormField extends StatelessWidget {
           decoration: inputDecoration().copyWith(
             contentPadding: EdgeInsets.symmetric(
                 horizontal: space400, vertical: verticalContentPadding ?? 0),
-            hintStyle: const TextStyle(
-                color: textNeutralSecondary, fontWeight: FontWeight.w400),
+            hintStyle: placeholderStyle ??
+                const TextStyle(
+                    color: textNeutralSecondary, fontWeight: FontWeight.w400),
             suffixIcon: suffixIcon,
             prefixText: prefixText,
             prefixStyle: const TextStyle(color: textButtonOutlined),

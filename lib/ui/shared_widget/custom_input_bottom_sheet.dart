@@ -65,9 +65,8 @@ class CustomInputBottomSheet extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
 
-                // Illustration dengan tinggi yang bisa disesuaikan
                 Container(
-                  height: 150, // Kurangi dari 200 ke 150
+                  height: 150,
                   child: Image.asset(
                     'assets/images/img_success_illustration.png',
                     fit: BoxFit.contain,
@@ -80,6 +79,7 @@ class CustomInputBottomSheet extends StatelessWidget {
                   placeholder: 'Ganti Wiper Depan Patah BARXOLID K 3123...',
                   hintColor: black500,
                   titleSection: 'Jenis Pengeluaran',
+                  titleStyle: smRegular.copyWith(color: black950),
                 ),
                 SizedBox(height: 16),
                 CustomTextFormField(
@@ -89,6 +89,7 @@ class CustomInputBottomSheet extends StatelessWidget {
                   placeholder: 'Rp 0',
                   hintColor: black500,
                   titleSection: 'Total Pengeluaran',
+                  titleStyle: smRegular.copyWith(color: black950),
                 ),
                 SizedBox(height: 24),
 
