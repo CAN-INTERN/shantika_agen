@@ -33,8 +33,9 @@ class _SeatScreenState extends State<SeatScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: EmptyStateView(
-                  title: 'Tidak menemukan pemesanan',
+                  title: 'Tidak ada data setoran untuk anda',
                   imagePath: 'assets/images/img_no_deposit.png',
+                  isSvg: false,
                 )
               ),
             ),

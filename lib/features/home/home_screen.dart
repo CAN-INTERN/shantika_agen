@@ -50,15 +50,15 @@ class _HomeScreenState extends State<HomeScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 36),
+                SizedBox(height: 36),
                 _buildHeaderView(context),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
                 _buildBannerSection(),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 _buildBookingCard(context),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 _buildETicketCard(context),
-                const SizedBox(height: 100),
+                SizedBox(height: 100),
               ],
             ),
           ],
@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHeaderView(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -145,6 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
             titleSection: 'Tempat Tujuan',
             controller: _destinationController,
             placeholder: 'Pilih Tempat Tujuan',
+            titleStyle: smRegular.copyWith(color: black950),
+            placeholderStyle: smRegular.copyWith(color: black950),
           ),
           SizedBox(height: 16),
           Row(
@@ -155,6 +157,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   titleSection: 'Tanggal Keberangkatan',
                   controller: _dateController,
                   placeholder: 'Pilih Tanggal',
+                  titleStyle: smRegular.copyWith(color: black950),
+                  placeholderStyle: smRegular.copyWith(color: black950),
                 ),
               ),
               SizedBox(width: 12),
@@ -164,6 +168,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   titleSection: 'Waktu Berangkat',
                   controller: _timeController,
                   placeholder: 'Pilih Waktu',
+                  titleStyle: smRegular.copyWith(color: black950),
+                  placeholderStyle: smRegular.copyWith(color: black950),
                 ),
               ),
             ],
@@ -173,6 +179,8 @@ class _HomeScreenState extends State<HomeScreen> {
             titleSection: 'Kelas Keberangkatan',
             controller: _classController,
             placeholder: 'Pilih Armada',
+            titleStyle: smRegular.copyWith(color: black950),
+            placeholderStyle: smRegular.copyWith(color: black950),
           ),
           SizedBox(height: 20),
           CustomButton(
