@@ -12,7 +12,8 @@ class UserPreference {
 
   Future<void> setToken(String newToken) async {
     debugPrint('UserPreference.setToken() called');
-    debugPrint('Token to save: ${newToken.substring(0, 50)}...');
+    final displayToken = newToken.length > 20 ? newToken.substring(0, 20) : newToken;
+    debugPrint('Token to save: $displayToken...');
     debugPrint('Token length: ${newToken.length}');
 
     final success = await prefs.setString(_keyToken, newToken);
@@ -20,8 +21,10 @@ class UserPreference {
     final saved = prefs.getString(_keyToken);
 
     if (saved != newToken) {
-      debugPrint('Saved token: ${saved?.substring(0, 50)}...');
-      debugPrint('Expected:    ${newToken.substring(0, 50)}...');
+      final displaySaved = (saved != null && saved.length > 20) ? saved.substring(0, 20) : saved;
+      final displayNew = newToken.length > 20 ? newToken.substring(0, 20) : newToken;
+      debugPrint('Saved token: $displaySaved...');
+      debugPrint('Expected:    $displayNew...');
     }
   }
 

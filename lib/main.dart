@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_core/firebase_core.dart'; // Add
 import 'package:shantika_agen/features/chat/cubit/chat_cubit.dart';
 import 'package:shantika_agen/features/profile/about%20us/cubit/about_us_cubit.dart';
 import 'package:shantika_agen/features/profile/faq/cubit/faq_cubit.dart';
@@ -12,18 +13,27 @@ import 'package:shantika_agen/repository/privacy_policy_repository.dart';
 import 'package:shantika_agen/repository/terms_condition_repository.dart';
 import 'package:shantika_agen/splash_screen.dart';
 import 'package:shantika_agen/ui/theme.dart';
+import 'package:shantika_agen/config/user_preferences.dart'; // Add
 import 'config/service_locator.dart';
+import 'firebase_options.dart'; // Add - generate with flutterfire configure
 import 'features/authentication/cubit/login_cubit.dart';
 import 'features/authentication/login_screen.dart';
 import 'features/navigation/navigation_screen.dart';
-import 'features/navigation/cubit/update_fcm_token_cubit.dart'; // Add this import
+import 'features/navigation/cubit/update_fcm_token_cubit.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   await setUpLocator(navigatorKey);
+
+  await UserPreferences.init();
 
   runApp(const MyApp());
 }
@@ -35,9 +45,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => LoginCubit()),
+        BlocProvider(create: (context) { final cubit = LoginCubit(); cubit.init(); return cubit; },),
         BlocProvider(create: (context) => UpdateFcmTokenCubit()),
-        
+
         /// Chat
         BlocProvider(create: (context) => ChatCubit(serviceLocator<ChatRepository>())),
 
@@ -46,7 +56,6 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => FaqCubit(serviceLocator<FaqRepository>())),
         BlocProvider(create: (context) => TermsConditionCubit(serviceLocator<TermsConditionRepository>())),
         BlocProvider(create: (context) => PrivacyPolicyCubit(serviceLocator<PrivacyPolicyRepository>())),
-
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

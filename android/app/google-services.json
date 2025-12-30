@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "500904762182",
+    "project_id": "shantika-agen",
+    "storage_bucket": "shantika-agen.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:500904762182:android:6a3123939a5b29ac58e347",
+        "android_client_info": {
+          "package_name": "com.example.shantika_agen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "500904762182-ac32aa4m47m7rpeq7lhqs8f0t69d63dv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shantika_agen",
+            "certificate_hash": "b91e89009b68e6e952bc0c6ba204c4b795e26b96"
+          }
+        },
+        {
+          "client_id": "500904762182-jtm626vdflpn4jufct6kva125m6pmtp8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDi08Wz3X_aJ2c4Amc-ZOxhZ3CPjJyh4Qs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "500904762182-jtm626vdflpn4jufct6kva125m6pmtp8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "500904762182-pk5ihqr6ittqkpscro3ptfeb76c0v5l7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shantikaAgen"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shantika_agen/config/user_preferences.dart';
 import 'package:shantika_agen/ui/color.dart';
 import 'package:shantika_agen/ui/dimension.dart';
 import 'package:shantika_agen/ui/typography.dart';
@@ -8,6 +9,14 @@ import '../../../ui/shared_widget/show_toast.dart';
 
 class PersonalInformation extends StatelessWidget {
   const PersonalInformation({super.key});
+
+  // ✅ Get data from UserPreferences
+  String get agencyName => "JEPARA, JEPARA"; // TODO: Get from API agencies.agent.name
+  String get email => UserPreferences.userEmail ?? "-";
+  String get phone => UserPreferences.userPhone ?? "-";
+  String get gender => "Pria"; // TODO: Get from user.gender or map Male/Female
+  String get address => UserPreferences.userAddress ?? "-";
+  String? get avatarUrl => UserPreferences.userPhoto;
 
   @override
   Widget build(BuildContext context) {
@@ -37,22 +46,22 @@ class PersonalInformation extends StatelessWidget {
               SizedBox(height: space800),
               _buildTextField(
                 label: "Email",
-                value: "kkaylanasywa@gmail.com",
+                value: email,
               ),
               SizedBox(height: spacing6),
               _buildTextField(
                 label: "Nomor Telepon",
-                value: "+6281234567994",
+                value: phone,
               ),
               SizedBox(height: spacing6),
               _buildTextField(
                 label: "Jenis Kelamin",
-                value: "Pria",
+                value: gender,
               ),
               SizedBox(height: spacing6),
               _buildTextField(
                 label: "Alamat Lengkap",
-                value: "Semarang",
+                value: address,
                 maxLines: 5,
               ),
             ],
@@ -70,7 +79,9 @@ class PersonalInformation extends StatelessWidget {
             CircleAvatar(
               radius: 50,
               backgroundColor: black300,
-              backgroundImage: AssetImage('assets/images/img_eunsoo.jpeg'),
+              backgroundImage: avatarUrl != null && avatarUrl!.isNotEmpty
+                  ? NetworkImage(avatarUrl!)
+                  : AssetImage('assets/images/img_eunsoo.jpeg') as ImageProvider,
             ),
             Positioned.fill(
               child: Container(
@@ -105,7 +116,7 @@ class PersonalInformation extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "JEPARA, JEPARA",
+                agencyName,
                 style: mdSemiBold,
               ),
               SizedBox(height: space150),
@@ -197,6 +208,7 @@ class PersonalInformation extends StatelessWidget {
                       label: 'Kamera',
                       onTap: () {
                         Navigator.pop(dialogContext);
+                        // TODO: Implement camera upload
                         CustomToast.showSuccess(context, 'Kamera dipilih');
                       },
                     ),
@@ -207,6 +219,7 @@ class PersonalInformation extends StatelessWidget {
                       label: 'Galeri',
                       onTap: () {
                         Navigator.pop(dialogContext);
+                        // TODO: Implement gallery upload
                         CustomToast.showSuccess(context, 'Galeri dipilih');
                       },
                     ),
