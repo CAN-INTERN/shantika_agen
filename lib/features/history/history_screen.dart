@@ -16,11 +16,33 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   int selectedDateIndex = 0;
-  final List<Map<String, String>> dates = [
-    {'day': '22', 'month': 'Des 2025'},
-    {'day': '23', 'month': 'Des 2025'},
-    {'day': '24', 'month': 'Des 2025'},
-  ];
+  List<Map<String, String>> dates = [];
+  DateTime? selectedCustomDate;
+
+  @override
+  void initState() {
+    super.initState();
+    _generateCurrentMonthDates();
+  }
+
+  void _generateCurrentMonthDates() {
+    final now = DateTime.now();
+    final firstDayOfMonth = DateTime(now.year, now.month, 1);
+    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+
+    dates.clear();
+    for (int day = 1; day <= lastDayOfMonth.day; day++) {
+      final date = DateTime(now.year, now.month, day);
+      dates.add({
+        'day': day.toString(),
+        'month': '${_getMonthName(date.month)} ${date.year}',
+        'fullDate': date.toString(),
+      });
+    }
+
+    // Set selected index to current day
+    selectedDateIndex = now.day - 1;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +78,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _buildBalanceCard() {
+    String selectedDateText;
+    if (selectedDateIndex >= 0 && selectedDateIndex < dates.length) {
+      final date = dates[selectedDateIndex];
+      selectedDateText = '${date['day']} ${date['month']}';
+    } else if (selectedCustomDate != null) {
+      selectedDateText = '${selectedCustomDate!.day} ${_getMonthName(selectedCustomDate!.month)} ${selectedCustomDate!.year}';
+    } else {
+      selectedDateText = '${dates[0]['day']} ${dates[0]['month']}';
+    }
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -85,7 +117,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Tagihan 22 Desember 2025',
+                      Text('Tagihan $selectedDateText',
                           style: smRegular.copyWith(color: black00)),
                       SizedBox(height: 8),
                       Text('Rp0', style: lSemiBold.copyWith(color: black00)),
@@ -117,71 +149,88 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _buildDateSelector() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          ...List.generate(dates.length, (index) {
-            final isSelected = selectedDateIndex == index;
-            return Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    selectedDateIndex = index;
-                  });
-                },
-                child: Container(
-                  margin:
-                  EdgeInsets.only(right: index < dates.length - 1 ? 8 : 0),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    color: isSelected ? jacarta400 : black00,
-                    borderRadius: BorderRadius.circular(12),
+    return SizedBox(
+      height: 90,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: dates.length + 1, // +1 for the calendar picker
+        itemBuilder: (context, index) {
+          if (index == dates.length) {
+            // Calendar picker button
+            return GestureDetector(
+              onTap: () => _selectDate(context),
+              child: Container(
+                width: 80,
+                margin: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  color: selectedDateIndex == -1 ? jacarta400 : black00,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: selectedDateIndex == -1 ? jacarta400 : Colors.grey[300]!,
+                    width: 1,
                   ),
-                  child: Column(
-                    children: [
-                      Text(dates[index]['day']!,
-                          style: mlBold.copyWith(
-                            color: isSelected ? black00 : black950,
-                          )),
-                      const SizedBox(height: 4),
-                      Text(dates[index]['month']!,
-                          style: xsRegular.copyWith(
-                            color: isSelected ? black00 : black950,
-                          )),
-                    ],
-                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 24,
+                      color: selectedDateIndex == -1 ? black00 : black950,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Pilih Tanggal',
+                      style: xxsRegular.copyWith(
+                        color: selectedDateIndex == -1 ? black00 : black950,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
             );
-          }),
-          GestureDetector(
-            onTap: () => _selectDate(context),
+          }
+
+          final isSelected = selectedDateIndex == index;
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedDateIndex = index;
+                selectedCustomDate = null;
+              });
+            },
             child: Container(
               width: 80,
-              margin: const EdgeInsets.only(left: 8),
+              margin: EdgeInsets.only(right: 8),
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                color: black00,
+                color: isSelected ? jacarta400 : black00,
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isSelected ? jacarta400 : Colors.grey[300]!,
+                  width: 1,
+                ),
               ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.calendar_today,
-                    size: 24,
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Pilih Tanggal',
-                    style: xxsRegular,
-                    textAlign: TextAlign.center,
-                  ),
+                  Text(dates[index]['day']!,
+                      style: mlBold.copyWith(
+                        color: isSelected ? black00 : black950,
+                      )),
+                  const SizedBox(height: 4),
+                  Text(dates[index]['month']!,
+                      style: xxsRegular.copyWith(
+                        color: isSelected ? black00 : black950,
+                      )),
                 ],
               ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -189,22 +238,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+      initialDate: selectedCustomDate ?? DateTime.now(),
+      firstDate: DateTime(2020),
       lastDate: DateTime.now().add(const Duration(days: 365)),
-      locale: const Locale('id', 'ID'),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: ColorScheme.light(
-              primary: primaryColor,
+              primary: jacarta800,
               onPrimary: black00,
               onSurface: black950,
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: primaryColor,
-              ),
             ),
           ),
           child: child!,
@@ -215,6 +258,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     if (picked != null) {
       setState(() {
         selectedDateIndex = -1;
+        selectedCustomDate = picked;
       });
     }
   }
@@ -255,11 +299,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
           SizedBox(height: 32),
           CustomButton(
-            onPressed: () {
-              setState(() {
-                selectedDateIndex = 0;
-              });
-            },
+            onPressed: () {},
             width: 150,
             height: 40,
             backgroundColor: black00,
