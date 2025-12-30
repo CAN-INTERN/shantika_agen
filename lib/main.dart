@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:firebase_core/firebase_core.dart'; // Add
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shantika_agen/features/chat/cubit/chat_cubit.dart';
 import 'package:shantika_agen/features/profile/about%20us/cubit/about_us_cubit.dart';
 import 'package:shantika_agen/features/profile/faq/cubit/faq_cubit.dart';
@@ -13,9 +14,9 @@ import 'package:shantika_agen/repository/privacy_policy_repository.dart';
 import 'package:shantika_agen/repository/terms_condition_repository.dart';
 import 'package:shantika_agen/splash_screen.dart';
 import 'package:shantika_agen/ui/theme.dart';
-import 'package:shantika_agen/config/user_preferences.dart'; // Add
+import 'package:shantika_agen/config/user_preferences.dart';
 import 'config/service_locator.dart';
-import 'firebase_options.dart'; // Add - generate with flutterfire configure
+import 'firebase_options.dart';
 import 'features/authentication/cubit/login_cubit.dart';
 import 'features/authentication/login_screen.dart';
 import 'features/navigation/navigation_screen.dart';
@@ -26,7 +27,6 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -45,23 +45,40 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) { final cubit = LoginCubit(); cubit.init(); return cubit; },),
+
+        ///Authentication
+        BlocProvider(create: (context) {final cubit = LoginCubit();cubit.init();return cubit;}),
         BlocProvider(create: (context) => UpdateFcmTokenCubit()),
 
         /// Chat
-        BlocProvider(create: (context) => ChatCubit(serviceLocator<ChatRepository>())),
+        BlocProvider(
+            create: (context) => ChatCubit(serviceLocator<ChatRepository>())),
 
-        ///Profile
+        /// Profile
         BlocProvider(create: (context) => AboutUsCubit(serviceLocator<AboutUsRepository>())),
         BlocProvider(create: (context) => FaqCubit(serviceLocator<FaqRepository>())),
         BlocProvider(create: (context) => TermsConditionCubit(serviceLocator<TermsConditionRepository>())),
         BlocProvider(create: (context) => PrivacyPolicyCubit(serviceLocator<PrivacyPolicyRepository>())),
+
       ],
+
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Shantika Agen',
         navigatorKey: navigatorKey,
         theme: AppTheme.light,
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('id', 'ID'),
+          Locale('en', 'US'),
+        ],
+
+        locale: const Locale('id', 'ID'),
+
         routes: {
           '/login': (context) => LoginScreen(),
           '/home': (context) => NavigationScreen(),

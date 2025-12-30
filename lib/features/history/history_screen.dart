@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:shantika_agen/ui/color.dart';
 import 'package:shantika_agen/ui/shared_widget/custom_button.dart';
 import 'package:shantika_agen/ui/typography.dart';
@@ -97,7 +99,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             builder: (context) => DepositDetailScreen(),
                           ),
                         );
-                      },                      backgroundColor: black00,
+                      },
+                      backgroundColor: black00,
                       width: 95,
                       height: 35,
                       child: Text(
@@ -129,7 +132,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 },
                 child: Container(
                   margin:
-                      EdgeInsets.only(right: index < dates.length - 1 ? 8 : 0),
+                  EdgeInsets.only(right: index < dates.length - 1 ? 8 : 0),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
                     color: isSelected ? jacarta400 : black00,
@@ -168,7 +171,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     Icons.calendar_today,
                     size: 24,
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     'Pilih Tanggal',
                     style: xxsRegular,
@@ -187,8 +190,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now().add(const Duration(days: 365)),
+      locale: const Locale('id', 'ID'),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -196,6 +200,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
               primary: primaryColor,
               onPrimary: black00,
               onSurface: black950,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: primaryColor,
+              ),
             ),
           ),
           child: child!,
@@ -206,8 +215,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
     if (picked != null) {
       setState(() {
         selectedDateIndex = -1;
-        String day = picked.day.toString();
-        String month = _getMonthName(picked.month);
       });
     }
   }
@@ -248,7 +255,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ),
           SizedBox(height: 32),
           CustomButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                selectedDateIndex = 0;
+              });
+            },
             width: 150,
             height: 40,
             backgroundColor: black00,
