@@ -10,6 +10,7 @@ class UserPreferences {
   static const String _keyUserPhoto = 'user_photo';
   static const String _keyUserPhone = 'user_phone';
   static const String _keyUserAddress = 'user_address';
+  static const String _keyUserGender = 'user_gender';
   static const String _keyIsLoggedIn = 'is_logged_in';
   static const String _keyAuthToken = 'auth_token';
   static const String _keyUuid = 'uuid';
@@ -18,7 +19,6 @@ class UserPreferences {
   /// Initialize SharedPreferences
   static Future<void> init() async {
     _preferences = await SharedPreferences.getInstance();
-    print('✅ UserPreferences initialized');
   }
 
   /// Save complete user data
@@ -29,6 +29,7 @@ class UserPreferences {
     String? photoUrl,
     String? phone,
     String? address,
+    String? gender,
     String? token,
     String? uuid,
   }) async {
@@ -40,16 +41,12 @@ class UserPreferences {
       if (photoUrl != null) await _preferences?.setString(_keyUserPhoto, photoUrl);
       if (phone != null) await _preferences?.setString(_keyUserPhone, phone);
       if (address != null) await _preferences?.setString(_keyUserAddress, address);
+      if (gender != null) await _preferences?.setString(_keyUserGender, gender);
       if (token != null) await _preferences?.setString(_keyAuthToken, token);
       if (uuid != null) await _preferences?.setString(_keyUuid, uuid);
 
       await _preferences?.setBool(_keyIsLoggedIn, true);
 
-      print('✅ User data saved successfully');
-      print('- UserId: $userId');
-      print('- Email: $email');
-      print('- Name: $name');
-      // ✅ SAFE SUBSTRING
       if (token != null) {
         final displayToken = token.length > 20 ? token.substring(0, 20) : token;
         print('- Token: $displayToken...');
@@ -57,7 +54,6 @@ class UserPreferences {
 
       return true;
     } catch (e) {
-      print('❌ Error saving user data: $e');
       return false;
     }
   }
@@ -80,6 +76,9 @@ class UserPreferences {
   /// Get user address
   static String? get userAddress => _preferences?.getString(_keyUserAddress);
 
+  /// Get user gender
+  static String? get userGender => _preferences?.getString(_keyUserGender);
+
   /// Get auth token
   static String? get authToken => _preferences?.getString(_keyAuthToken);
 
@@ -100,10 +99,8 @@ class UserPreferences {
   static Future<bool> saveAuthToken(String token) async {
     try {
       await _preferences?.setString(_keyAuthToken, token);
-      print('✅ Auth token saved');
       return true;
     } catch (e) {
-      print('❌ Error saving auth token: $e');
       return false;
     }
   }
@@ -112,10 +109,8 @@ class UserPreferences {
   static Future<bool> saveFcmToken(String token) async {
     try {
       await _preferences?.setString(_keyFcmToken, token);
-      print('✅ FCM token saved');
       return true;
     } catch (e) {
-      print('❌ Error saving FCM token: $e');
       return false;
     }
   }
@@ -129,12 +124,10 @@ class UserPreferences {
       await _preferences?.remove(_keyUserPhoto);
       await _preferences?.remove(_keyUserPhone);
       await _preferences?.remove(_keyUserAddress);
+      await _preferences?.remove(_keyUserGender);
       await _preferences?.remove(_keyAuthToken);
       await _preferences?.remove(_keyUuid);
       await _preferences?.setBool(_keyIsLoggedIn, false);
-
-      // FCM token tetap disimpan (optional)
-      // await _preferences?.remove(_keyFcmToken);
 
       print('✅ User data cleared');
       return true;
@@ -165,9 +158,9 @@ class UserPreferences {
     print('Phone: $userPhone');
     print('Photo: $userPhoto');
     print('Address: $userAddress');
+    print('Gender: $userGender');
     print('UUID: $uuid');
 
-    // ✅ SAFE SUBSTRING FOR TOKEN
     if (authToken != null) {
       final displayToken = authToken!.length > 20 ? authToken!.substring(0, 20) : authToken;
       print('Token: $displayToken...');
@@ -175,7 +168,6 @@ class UserPreferences {
       print('Token: null');
     }
 
-    // ✅ SAFE SUBSTRING FOR FCM TOKEN
     if (fcmToken != null) {
       final displayFcm = fcmToken!.length > 20 ? fcmToken!.substring(0, 20) : fcmToken;
       print('FCM Token: $displayFcm...');

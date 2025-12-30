@@ -40,7 +40,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
       });
     }
 
-    // Set selected index to current day
     selectedDateIndex = now.day - 1;
   }
 
@@ -154,10 +153,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: dates.length + 1, // +1 for the calendar picker
+        itemCount: dates.length + 1,
         itemBuilder: (context, index) {
           if (index == dates.length) {
-            // Calendar picker button
             return GestureDetector(
               onTap: () => _selectDate(context),
               child: Container(

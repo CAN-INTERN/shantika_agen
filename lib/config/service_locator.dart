@@ -8,6 +8,7 @@ import 'package:shantika_agen/config/user_preference.dart';
 import 'package:shantika_agen/repository/about_us_repository.dart';
 import 'package:shantika_agen/repository/faq_repository.dart';
 import 'package:shantika_agen/repository/privacy_policy_repository.dart';
+import 'package:shantika_agen/repository/profile_repository.dart';
 import 'package:shantika_agen/repository/terms_condition_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/api/api_service.dart';
@@ -75,6 +76,10 @@ Future<void> setUpLocator(GlobalKey<NavigatorState> navigatorKey) async {
 
   serviceLocator.registerLazySingleton<PrivacyPolicyRepository>(
         () => PrivacyPolicyRepository(serviceLocator<ApiService>()),
+  );
+
+ serviceLocator.registerLazySingleton<ProfileRepository>(
+        () => ProfileRepository(serviceLocator<ApiService>()),
   );
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
