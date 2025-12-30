@@ -5,6 +5,7 @@ import 'package:shantika_agen/ui/typography.dart';
 import '../../ui/shared_widget/custom_arrow.dart';
 import '../../ui/shared_widget/custom_button.dart';
 import '../../ui/shared_widget/custom_text_form_field.dart';
+import 'qr_scanner_screen.dart';
 
 class ExchangeTicketScreen extends StatefulWidget {
   const ExchangeTicketScreen({super.key});
@@ -20,6 +21,21 @@ class _ExchangeTicketScreenState extends State<ExchangeTicketScreen> {
   void dispose() {
     _bookingCodeController.dispose();
     super.dispose();
+  }
+
+  void _openQRScanner() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QrScannerScreen(),
+      ),
+    );
+
+    if (result != null && result is String) {
+      setState(() {
+        _bookingCodeController.text = result;
+      });
+    }
   }
 
   @override
@@ -64,6 +80,7 @@ class _ExchangeTicketScreenState extends State<ExchangeTicketScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: CustomTextFormField(
@@ -73,10 +90,17 @@ class _ExchangeTicketScreenState extends State<ExchangeTicketScreen> {
                 ),
               ),
               SizedBox(width: 12),
-              Image.asset(
-                "assets/images/img_qr_scanner.png",
-                width: 28,
-              )
+              Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: GestureDetector(
+                  onTap: _openQRScanner,
+                  child: Image.asset(
+                    "assets/images/img_qr_scanner.png",
+                    width: 28,
+                    height: 28,
+                  ),
+                ),
+              ),
             ],
           ),
         ],
