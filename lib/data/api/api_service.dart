@@ -6,7 +6,7 @@ import 'package:shantika_agen/model/chat_model.dart';
 import 'package:shantika_agen/model/faq_model.dart';
 import 'package:shantika_agen/model/privacy_policy_model.dart';
 import 'package:shantika_agen/model/terms_condition_model.dart';
-import 'package:shantika_agen/model/user_model.dart'; // TAMBAH INI
+import 'package:shantika_agen/model/user_model.dart';
 import '../../config/constant.dart';
 import '../../model/about_us_model.dart';
 
@@ -20,9 +20,17 @@ abstract class ApiService {
   @POST("/agen/login/email")
   Future<HttpResponse<UserModel>> loginWithEmail(@Body() Map<String, dynamic> body);
 
- /// Login Phone
+  /// Login Phone
   @POST("/agen/login/phone")
   Future<HttpResponse<UserModel>> loginWithPhone(@Body() Map<String, dynamic> body);
+
+  /// Update Profile (Upload Avatar)
+  @POST("/agen/update")
+  Future<HttpResponse<UserModel>> updateProfile(@Part(name: 'avatar') File? avatar,);
+
+  /// Get Profile
+  @GET("/agen/profile")
+  Future<HttpResponse<UserModel>> getProfile();
 
   /// Chat
   @GET("/agen/chats")
@@ -36,11 +44,11 @@ abstract class ApiService {
   @GET("/faq")
   Future<HttpResponse<FaqModel>> faq();
 
-  /// Terms and Contions
+  /// Terms and Conditions
   @GET("/term_and_condition")
   Future<HttpResponse<TermsConditionModel>> termConditions();
 
-  // Privacy Policy
+  /// Privacy Policy
   @GET("/privacy_policy")
   Future<HttpResponse<PrivacyPolicyModel>> privacyPolicy();
 }

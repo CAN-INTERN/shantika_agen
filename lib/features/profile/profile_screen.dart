@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shantika_agen/config/user_preferences.dart';
@@ -7,6 +8,7 @@ import 'package:shantika_agen/features/authentication/login_screen.dart';
 import 'package:shantika_agen/features/profile/about%20us/about_us_screen.dart';
 import 'package:shantika_agen/features/profile/faq/faq_screen.dart';
 import 'package:shantika_agen/features/profile/notification/notification_screen.dart';
+import 'package:shantika_agen/features/profile/personal%20information/cubit/personal_info_cubit.dart';
 import 'package:shantika_agen/features/profile/personal%20information/personal_information.dart';
 import 'package:shantika_agen/features/profile/privacy_policy/privacy_policy_screen.dart';
 import 'package:shantika_agen/features/profile/review/rating_screen.dart';
@@ -30,6 +32,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int get rating => 0;
   String? get avatarUrl => UserPreferences.userPhoto;
 
+  @override
+  void initState() {
+    super.initState();
+    // ✅ Load profile saat pertama kali buka screen
+    _loadProfile();
+  }
+
+  void _loadProfile() {
+    context.read<PersonalInfoCubit>().getProfile();
+  }
+
   Future<String> getVersionInfo() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
@@ -38,173 +51,178 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: black00,
-      appBar: _header(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: spacing6),
-              GestureDetector(
-                onTap: () {
-                  if (avatarUrl != null && avatarUrl!.isNotEmpty) {
-                    _showImagePreview(context, avatarUrl!);
-                  }
-                },
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundImage: avatarUrl != null && avatarUrl!.isNotEmpty
-                      ? NetworkImage(avatarUrl!)
-                      : AssetImage('assets/images/img_eunsoo.jpeg')
-                  as ImageProvider,
-                  backgroundColor: black500,
-                ),
-              ),
-
-              SizedBox(height: spacing5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return BlocListener<PersonalInfoCubit, PersonalInfoState>(
+      listener: (context, state) {
+        if (state is ProfileRefreshed) {
+          setState(() {});
+        }
+      },
+      child: Scaffold(
+        backgroundColor: black00,
+        appBar: _header(),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            _loadProfile();
+            await Future.delayed(Duration(seconds: 1));
+          },
+          child: SafeArea(
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Column(
                 children: [
-                  Text(name, style: lgBold),
-                  SizedBox(width: spacing3),
-                  SvgPicture.asset('assets/icons/ic_rate_filled.svg', width: iconL),
-                  SizedBox(width: space050),
-                  Text('$rating', style: lgBold),
+                  SizedBox(height: spacing6),
+                  GestureDetector(
+                    onTap: () {
+                      if (avatarUrl != null && avatarUrl!.isNotEmpty) {
+                        _showImagePreview(context, avatarUrl!);
+                      }
+                    },
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundImage: avatarUrl != null && avatarUrl!.isNotEmpty
+                          ? NetworkImage(avatarUrl!)
+                          : AssetImage('assets/images/img_eunsoo.jpeg')
+                      as ImageProvider,
+                      backgroundColor: black500,
+                    ),
+                  ),
+                  SizedBox(height: spacing5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(name, style: lgBold),
+                      SizedBox(width: spacing3),
+                      SvgPicture.asset('assets/icons/ic_rate_filled.svg',
+                          width: iconL),
+                      SizedBox(width: space050),
+                      Text('$rating', style: lgBold),
+                    ],
+                  ),
+                  SizedBox(height: spacing7),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: padding20),
+                    child: Column(
+                      children: [
+                        _menuItem(
+                          svgIcon: 'assets/icons/id_profile_person.svg',
+                          text: "Informasi Pribadi",
+                          onTap: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PersonalInformation(),
+                              ),
+                            );
+                            _loadProfile();
+                          },
+                        ),
+                        SizedBox(height: spacing4),
+                        _menuItem(
+                          svgIcon: 'assets/icons/ic_notify.svg',
+                          text: "Notifikasi",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => NotificationScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(height: spacing4),
+                        _ratingAgenCard(),
+                        SizedBox(height: spacing4),
+                        _menuItem(
+                          svgIcon: 'assets/icons/ic_information.svg',
+                          text: "Tentang Kami",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AboutUsScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(height: spacing4),
+                        _menuItem(
+                          svgIcon: 'assets/icons/ic_privacy_policy.svg',
+                          text: "Kebijakan Privasi",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => PrivacyPolicyScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(height: spacing4),
+                        _menuItem(
+                          svgIcon: 'assets/icons/ic_document.svg',
+                          text: "Syarat dan Ketentuan",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TermsConditionScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(height: spacing4),
+                        _menuItem(
+                          svgIcon: 'assets/icons/ic_faq.svg',
+                          text: "FAQ",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FaqScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        SizedBox(height: spacing4),
+                        FutureBuilder<String>(
+                          future: getVersionInfo(),
+                          builder: (context, snapshot) {
+                            String versionText = "Versi ...";
+
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              if (snapshot.hasData) {
+                                versionText = "Versi ${snapshot.data}";
+                              } else {
+                                versionText = "Versi -";
+                              }
+                            }
+
+                            return _menuItem(
+                              svgIcon: 'assets/icons/ic_stars_black.svg',
+                              text: "Beri Nilai App Kami",
+                              trailing: Text(
+                                versionText,
+                                style: xsMedium.copyWith(color: black600),
+                              ),
+                              onTap: _openStoreReview,
+                            );
+                          },
+                        ),
+                        SizedBox(height: spacing6),
+                        CustomButton(
+                          onPressed: () => _showLogoutDialog(context),
+                          padding: EdgeInsets.symmetric(vertical: padding16),
+                          child: Text('Keluar'),
+                          backgroundColor: red600,
+                        ),
+                        SizedBox(height: spacing6),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-
-              SizedBox(height: spacing7),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: padding20),
-                child: Column(
-                  children: [
-                    _menuItem(
-                      svgIcon: 'assets/icons/id_profile_person.svg',
-                      text: "Informasi Pribadi",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PersonalInformation(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    SizedBox(height: spacing4),
-                    _menuItem(
-                      svgIcon: 'assets/icons/ic_notify.svg',
-                      text: "Notifikasi",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => NotificationScreen(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    SizedBox(height: spacing4),
-                    _ratingAgenCard(),
-
-                    SizedBox(height: spacing4),
-                    _menuItem(
-                      svgIcon: 'assets/icons/ic_information.svg',
-                      text: "Tentang Kami",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => AboutUsScreen(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    SizedBox(height: spacing4),
-                    _menuItem(
-                      svgIcon: 'assets/icons/ic_privacy_policy.svg',
-                      text: "Kebijakan Privasi",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PrivacyPolicyScreen(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    SizedBox(height: spacing4),
-                    _menuItem(
-                      svgIcon: 'assets/icons/ic_document.svg',
-                      text: "Syarat dan Ketentuan",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TermsConditionScreen(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    SizedBox(height: spacing4),
-                    _menuItem(
-                      svgIcon: 'assets/icons/ic_faq.svg',
-                      text: "FAQ",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FaqScreen(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    SizedBox(height: spacing4),
-                    FutureBuilder<String>(
-                      future: getVersionInfo(),
-                      builder: (context, snapshot) {
-                        String versionText = "Versi ...";
-
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          if (snapshot.hasData) {
-                            versionText = "Versi ${snapshot.data}";
-                          } else {
-                            versionText = "Versi -";
-                          }
-                        }
-
-                        return _menuItem(
-                          svgIcon: 'assets/icons/ic_stars_black.svg',
-                          text: "Beri Nilai App Kami",
-                          trailing: Text(
-                            versionText,
-                            style: xsMedium.copyWith(color: black600),
-                          ),
-                          onTap: _openStoreReview,
-                        );
-                      },
-                    ),
-
-                    SizedBox(height: spacing6),
-                    CustomButton(
-                      onPressed: () => _showLogoutDialog(context),
-                      padding: EdgeInsets.symmetric(vertical: padding16),
-                      child: Text('Keluar'),
-                      backgroundColor: red600,
-                    ),
-
-                    SizedBox(height: spacing6),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -382,10 +400,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onPressed: () async {
                           Navigator.pop(dialogContext);
 
-                          // ✅ Clear UserPreferences (hapus token & data)
                           await UserPreferences.clearUserData();
 
-                          // ✅ Navigate to Login & clear stack
                           if (context.mounted) {
                             Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(

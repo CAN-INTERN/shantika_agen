@@ -111,9 +111,9 @@ class Agencies {
   @JsonKey(name: "deleted_at")
   dynamic deletedAt;
   @JsonKey(name: "created_at")
-  DateTime? createdAt; // ✅ NULLABLE
+  DateTime? createdAt;
   @JsonKey(name: "updated_at")
-  DateTime? updatedAt; // ✅ NULLABLE
+  DateTime? updatedAt;
   @JsonKey(name: "agent")
   Agent agent;
 
@@ -143,23 +143,23 @@ class Agent {
   @JsonKey(name: "deleted_at")
   dynamic deletedAt;
   @JsonKey(name: "created_at")
-  DateTime? createdAt; // ✅ NULLABLE
+  DateTime? createdAt;
   @JsonKey(name: "updated_at")
-  DateTime? updatedAt; // ✅ NULLABLE
+  DateTime? updatedAt;
   @JsonKey(name: "lat")
-  String? lat; // ✅ NULLABLE
+  String? lat;
   @JsonKey(name: "lng")
-  String? lng; // ✅ NULLABLE
+  String? lng;
   @JsonKey(name: "address")
-  String? address; // ✅ NULLABLE
+  String? address;
   @JsonKey(name: "avatar")
   dynamic avatar;
   @JsonKey(name: "is_active")
   bool isActive;
   @JsonKey(name: "code")
-  String? code; // ✅ NULLABLE
+  String? code;
   @JsonKey(name: "phone")
-  String? phone; // ✅ NULLABLE
+  String? phone;
   @JsonKey(name: "is_agent")
   bool isAgent;
   @JsonKey(name: "is_route")
@@ -167,27 +167,27 @@ class Agent {
   @JsonKey(name: "is_agent_route")
   bool isAgentRoute;
   @JsonKey(name: "sectoral_id")
-  int? sectoralId; // ✅ NULLABLE - ini yang error!
+  int? sectoralId;
   @JsonKey(name: "is_redbus_pickup")
   bool isRedbusPickup;
   @JsonKey(name: "duration")
   dynamic duration;
   @JsonKey(name: "avatar_url")
-  String? avatarUrl; // ✅ NULLABLE
+  String? avatarUrl;
   @JsonKey(name: "city_name")
-  String? cityName; // ✅ NULLABLE
+  String? cityName;
   @JsonKey(name: "area_name")
-  String? areaName; // ✅ NULLABLE
+  String? areaName;
   @JsonKey(name: "morning_time")
-  String? morningTime; // ✅ NULLABLE
+  String? morningTime;
   @JsonKey(name: "night_time")
-  String? nightTime; // ✅ NULLABLE
+  String? nightTime;
   @JsonKey(name: "time_group")
-  List<String>? timeGroup; // ✅ NULLABLE
+  List<String>? timeGroup;
   @JsonKey(name: "price_agency")
-  num? priceAgency; // ✅ NULLABLE + num (bisa int/double)
+  num? priceAgency;
   @JsonKey(name: "price_route")
-  num? priceRoute; // ✅ NULLABLE + num (bisa int/double)
+  num? priceRoute;
   @JsonKey(name: "agency_departure_time_by_time_classification")
   dynamic agencyDepartureTimeByTimeClassification;
 
@@ -208,7 +208,7 @@ class Agent {
     required this.isAgent,
     required this.isRoute,
     required this.isAgentRoute,
-    this.sectoralId, // ✅ NULLABLE
+    this.sectoralId,
     required this.isRedbusPickup,
     this.duration,
     this.avatarUrl,
@@ -217,8 +217,8 @@ class Agent {
     this.morningTime,
     this.nightTime,
     this.timeGroup,
-    this.priceAgency, // ✅ NULLABLE
-    this.priceRoute, // ✅ NULLABLE
+    this.priceAgency,
+    this.priceRoute,
     this.agencyDepartureTimeByTimeClassification,
   });
 
