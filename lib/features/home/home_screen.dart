@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:shantika_agen/features/fleet/list_fleet_screen.dart';
 import 'package:shantika_agen/features/home/exchange_ticket_screen.dart';
 import 'package:shantika_agen/ui/shared_widget/custom_button.dart';
 import 'package:shantika_agen/ui/shared_widget/custom_card_container.dart';
 import 'package:shantika_agen/ui/shared_widget/custom_text_form_field.dart';
 import 'package:shantika_agen/ui/color.dart';
 import 'package:shantika_agen/ui/typography.dart';
+import '../../model/agency_model.dart';
+import '../../model/time_classification_model.dart';
+import '../../ui/shared_widget/custom_bottom_sheet.dart';
 import '../../ui/shared_widget/custom_card.dart';
 import '../notification/notification_screen.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'cubit/home_cubit.dart';
+import 'cubit/home_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,36 +28,18 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _classController = TextEditingController();
 
-  final List<String> destinations = [
-    'BADAMI-KARAWANG',
-    'BALA RAJA-SERANG',
-    'BANDUNG-BANDUNG',
-    'BARANANGSIANG-BOGOR',
-    'BEKASI BARAT-BEKASI',
-    'BEKASI TIMUR-BEKASI',
-    'BITUNG-TANGERANG',
-    'BOGOR-BOGOR',
-    'BSD-TANGERANG',
-    'BUBULAK-BOGOR',
-  ];
-
-  final List<Map<String, String>> timeSlots = [
-    {'label': 'Pagi', 'time': '07:00:00'},
-    {'label': 'Sore', 'time': '15:30:00'},
-    {'label': 'Malam', 'time': '18:00:00'},
-  ];
-
   final List<String> busClasses = [
     'Executive',
   ];
 
-  List<String> filteredDestinations = [];
   DateTime? selectedDate;
+  Agency? selectedAgency;
+  Time? selectedTime;
+  String? selectedClass;
 
   @override
   void initState() {
     super.initState();
-    filteredDestinations = destinations;
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -74,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
 
-    if (picked != null) {
+    if (picked != null && mounted) {
       setState(() {
         selectedDate = picked;
         String day = picked.day.toString().padLeft(2, '0');
@@ -113,197 +101,100 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showDestinationBottomSheet() {
-    final TextEditingController searchController = TextEditingController();
+    context.read<HomeCubit>().fetchAgencies();
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) {
-          void filterDestinations(String query) {
-            setModalState(() {
-              if (query.isEmpty) {
-                filteredDestinations = destinations;
-              } else {
-                filteredDestinations = destinations
-                    .where((destination) =>
-                    destination.toLowerCase().contains(query.toLowerCase()))
-                    .toList();
+      builder: (context) => BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          final isLoading = state is HomeLoading;
+          final isError = state is HomeError;
+          final agencies = state is HomeLoaded ? state.agencies : <Agency>[];
+          final errorMessage = isError ? (state as HomeError).message : null;
+
+          return SelectionBottomSheet<Agency>(
+            title: 'Pilih Tujuan',
+            items: agencies,
+            selectedItem: selectedAgency,
+            onItemSelected: (agency) {
+              if (mounted) {
+                setState(() {
+                  selectedAgency = agency;
+                  final agencyName = agency.agencyName ?? '';
+                  final cityName = agency.cityName ?? '';
+                  _destinationController.text = '$agencyName - $cityName';
+                });
               }
-            });
-          }
-
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.85,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(24),
-                topRight: Radius.circular(24),
-              ),
-            ),
-            child: Column(
-              children: [
-                // Handle bar
-                Container(
-                  margin: EdgeInsets.only(top: 12),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                SizedBox(height: 20),
-
-                // Search field
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextField(
-                    controller: searchController,
-                    onChanged: filterDestinations,
-                    decoration: InputDecoration(
-                      hintText: 'Cari Tujuan',
-                      hintStyle: TextStyle(color: Colors.grey[600]),
-                      prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-                      filled: true,
-                      fillColor: Colors.grey[100],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-
-                // Destination list
-                Expanded(
-                  child: ListView.separated(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: filteredDestinations.length,
-                    separatorBuilder: (context, index) => Divider(
-                      height: 1,
-                      color: Colors.grey[200],
-                    ),
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          setState(() {
-                            _destinationController.text =
-                            filteredDestinations[index];
-                          });
-                          Navigator.pop(context);
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Text(
-                            filteredDestinations[index],
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+            },
+            getItemName: (agency) {
+              final agencyName = agency.agencyName ?? '';
+              final cityName = agency.cityName ?? '';
+              return '$agencyName - $cityName';
+            },
+            getItemId: (agency) => agency.id?.toString(),
+            searchHint: 'Cari Tujuan',
+            isLoading: isLoading,
+            errorMessage: errorMessage,
+            onRetry: () {
+              context.read<HomeCubit>().fetchAgencies();
+            },
+            showSearch: true,
+            emptyStateMessage: 'Tidak ada tujuan ditemukan',
           );
         },
       ),
-    ).whenComplete(() {
-      searchController.dispose();
-      setState(() {
-        filteredDestinations = destinations;
-      });
-    });
+    );
   }
 
   void _showTimeBottomSheet() {
+    context.read<HomeCubit>().fetchTimeClassifications();
+
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Handle bar
-            Container(
-              margin: EdgeInsets.only(top: 12),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            SizedBox(height: 24),
+      builder: (context) => BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          final isLoading = state is TimeClassificationLoading;
+          final isError = state is TimeClassificationError;
+          final timeClassifications = state is TimeClassificationLoaded
+              ? state.timeClassifications
+              : <Time>[];
+          final errorMessage =
+              isError ? (state as TimeClassificationError).message : null;
 
-            // Title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Pilih Waktu',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-
-            // Time list
-            ListView.builder(
-              shrinkWrap: true,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              itemCount: timeSlots.length,
-              itemBuilder: (context, index) {
-                final timeSlot = timeSlots[index];
-                return InkWell(
-                  onTap: () {
-                    setState(() {
-                      _timeController.text =
-                      '${timeSlot['label']} ${timeSlot['time']}';
-                    });
-                    Navigator.pop(context);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 18),
-                    child: Text(
-                      '${timeSlot['label']} ${timeSlot['time']} WIB',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 30),
-          ],
-        ),
+          return SelectionBottomSheet<Time>(
+            title: 'Pilih Waktu',
+            items: timeClassifications,
+            selectedItem: selectedTime,
+            onItemSelected: (time) {
+              if (mounted) {
+                setState(() {
+                  selectedTime = time;
+                  final timeName = time.name ?? '';
+                  final timeStart = time.timeStart ?? '';
+                  _timeController.text = '$timeName $timeStart';
+                });
+              }
+            },
+            getItemName: (time) {
+              final timeName = time.name ?? '';
+              final timeStart = time.timeStart ?? '';
+              return '$timeName $timeStart WIB';
+            },
+            getItemId: (time) => time.id?.toString(),
+            searchHint: 'Cari Waktu',
+            isLoading: isLoading,
+            errorMessage: errorMessage,
+            onRetry: () {
+              context.read<HomeCubit>().fetchTimeClassifications();
+            },
+            showSearch: false,
+            emptyStateMessage: 'Tidak ada waktu tersedia',
+          );
+        },
       ),
     );
   }
@@ -311,84 +202,26 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showClassBottomSheet() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24),
-            topRight: Radius.circular(24),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Handle bar
-            Container(
-              margin: EdgeInsets.only(top: 12),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            SizedBox(height: 24),
-
-            // Search field
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Cari Armada',
-                  hintStyle: TextStyle(color: Colors.grey[400]),
-                  prefixIcon: Icon(Icons.search, color: Colors.grey[400]),
-                  filled: true,
-                  fillColor: Colors.grey[100],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-
-            // Class list
-            ListView.builder(
-              shrinkWrap: true,
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              itemCount: busClasses.length,
-              itemBuilder: (context, index) {
-                final busClass = busClasses[index];
-                return InkWell(
-                  onTap: () {
-                    setState(() {
-                      _classController.text = busClass;
-                    });
-                    Navigator.pop(context);
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 18),
-                    child: Text(
-                      busClass,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-            SizedBox(height: 30),
-          ],
-        ),
+      builder: (context) => SelectionBottomSheet<String>(
+        title: 'Pilih Kelas Armada',
+        items: busClasses,
+        selectedItem: selectedClass,
+        onItemSelected: (busClass) {
+          if (mounted) {
+            setState(() {
+              selectedClass = busClass;
+              _classController.text = busClass;
+            });
+          }
+        },
+        getItemName: (busClass) => busClass,
+        getItemId: (busClass) => busClass,
+        searchHint: 'Cari Armada',
+        isLoading: false,
+        showSearch: true,
+        emptyStateMessage: 'Tidak ada kelas tersedia',
       ),
     );
   }
@@ -552,7 +385,14 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 20),
           CustomButton(
             backgroundColor: jacarta800,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ListFleetScreen(),
+                ),
+              );
+            },
             width: double.infinity,
             height: 48,
             child: Text(
