@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shantika_agen/features/home/exchange_ticket/detail_ticket_screen.dart';
+import 'package:shantika_agen/features/home/exchange_ticket/qr_scanner_screen.dart';
 import 'package:shantika_agen/ui/color.dart';
 import 'package:shantika_agen/ui/typography.dart';
-
-import '../../ui/shared_widget/custom_arrow.dart';
-import '../../ui/shared_widget/custom_button.dart';
-import '../../ui/shared_widget/custom_text_form_field.dart';
+import '../../../ui/shared_widget/custom_arrow.dart';
+import '../../../ui/shared_widget/custom_button.dart';
+import '../../../ui/shared_widget/custom_text_form_field.dart';
 
 class ExchangeTicketScreen extends StatefulWidget {
   const ExchangeTicketScreen({super.key});
@@ -22,6 +23,45 @@ class _ExchangeTicketScreenState extends State<ExchangeTicketScreen> {
     super.dispose();
   }
 
+  void _openQRScanner() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => QrScannerScreen(),
+      ),
+    );
+
+    if (result != null && result is String) {
+      setState(() {
+        _bookingCodeController.text = result;
+      });
+    }
+  }
+
+  void _goToDetailTicket() {
+    final code = _bookingCodeController.text.trim();
+
+    if (code.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Kode booking tidak boleh kosong'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Langsung pindah ke detail ticket dengan kode booking
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailTicketScreen(
+          bookingCode: code,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,13 +70,13 @@ class _ExchangeTicketScreenState extends State<ExchangeTicketScreen> {
         child: Column(
           children: [
             _buildHeader(),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             _buildIllustration(),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             _buildBookingCodeForm(),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             _buildCheckButton(),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -64,19 +104,27 @@ class _ExchangeTicketScreenState extends State<ExchangeTicketScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: CustomTextFormField(
                   titleSection: "Masukan Tiket Booking",
                   controller: _bookingCodeController,
-                  placeholder: 'NSTK24223232',
+                  placeholder: 'NS00000167',
                 ),
               ),
-              SizedBox(width: 12),
-              Image.asset(
-                "assets/images/img_qr_scanner.png",
-                width: 28,
-              )
+              const SizedBox(width: 12),
+              Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: GestureDetector(
+                  onTap: _openQRScanner,
+                  child: Image.asset(
+                    "assets/images/img_qr_scanner.png",
+                    width: 28,
+                    height: 28,
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -89,7 +137,7 @@ class _ExchangeTicketScreenState extends State<ExchangeTicketScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: CustomButton(
         backgroundColor: jacarta800,
-        onPressed: () {},
+        onPressed: _goToDetailTicket,
         width: double.infinity,
         height: 48,
         child: Text(

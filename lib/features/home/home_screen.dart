@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shantika_agen/features/fleet/list_fleet_screen.dart';
-import 'package:shantika_agen/features/home/exchange_ticket_screen.dart';
+import 'package:shantika_agen/features/home/exchange_ticket/exchange_ticket_screen.dart';
 import 'package:shantika_agen/ui/shared_widget/custom_button.dart';
 import 'package:shantika_agen/ui/shared_widget/custom_card_container.dart';
 import 'package:shantika_agen/ui/shared_widget/custom_text_form_field.dart';
