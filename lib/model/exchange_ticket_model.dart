@@ -49,14 +49,14 @@ class Order {
   int totalPassenger;
   @JsonKey(name: "checkpoints")
   Checkpoints checkpoints;
-  @JsonKey(name: "checkpoint_destination")
-  dynamic checkpointDestination;
   @JsonKey(name: "created_at")
-  DateTime createdAt;
+  String createdAt;
   @JsonKey(name: "reserve_at")
-  DateTime reserveAt;
+  String reserveAt;
   @JsonKey(name: "departure_at")
   String departureAt;
+  @JsonKey(name: "time_classification_id")
+  int? timeClassificationId;
   @JsonKey(name: "status")
   String status;
   @JsonKey(name: "name_passenger")
@@ -73,8 +73,14 @@ class Order {
   int priceTravel;
   @JsonKey(name: "price_feed")
   int priceFeed;
+  @JsonKey(name: "price_non_feed")
+  int? priceNonFeed;
+  @JsonKey(name: "price_member_unit")
+  int? priceMemberUnit;
   @JsonKey(name: "id_member")
-  String idMember;
+  String? idMember;
+  @JsonKey(name: "code_member_stk")
+  String? codeMemberStk;
   @JsonKey(name: "price")
   int price;
   @JsonKey(name: "total_price")
@@ -83,6 +89,22 @@ class Order {
   int commision;
   @JsonKey(name: "review")
   dynamic review;
+  @JsonKey(name: "note")
+  String? note;
+  @JsonKey(name: "charge")
+  int? charge;
+  @JsonKey(name: "agent_discount_chair")
+  int? agentDiscountChair;
+  @JsonKey(name: "agent_discount_total")
+  int? agentDiscountTotal;
+  @JsonKey(name: "discount_agent_is_validate")
+  bool? discountAgentIsValidate;
+  @JsonKey(name: "is_traveloka")
+  bool? isTraveloka;
+  @JsonKey(name: "is_redbus")
+  bool? isRedbus;
+  @JsonKey(name: "payment")
+  Payment? payment;
 
   Order({
     required this.id,
@@ -91,10 +113,10 @@ class Order {
     required this.fleetClass,
     required this.totalPassenger,
     required this.checkpoints,
-    required this.checkpointDestination,
     required this.createdAt,
     required this.reserveAt,
     required this.departureAt,
+    this.timeClassificationId,
     required this.status,
     required this.namePassenger,
     required this.phonePassenger,
@@ -103,11 +125,22 @@ class Order {
     required this.priceMember,
     required this.priceTravel,
     required this.priceFeed,
-    required this.idMember,
+    this.priceNonFeed,
+    this.priceMemberUnit,
+    this.idMember,
+    this.codeMemberStk,
     required this.price,
     required this.totalPrice,
     required this.commision,
-    required this.review,
+    this.review,
+    this.note,
+    this.charge,
+    this.agentDiscountChair,
+    this.agentDiscountTotal,
+    this.discountAgentIsValidate,
+    this.isTraveloka,
+    this.isRedbus,
+    this.payment,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
@@ -117,6 +150,14 @@ class Order {
 
 @JsonSerializable()
 class Chair {
+  @JsonKey(name: "order_detail_id")
+  int? orderDetailId;
+  @JsonKey(name: "name")
+  String? name;
+  @JsonKey(name: "email")
+  String? email;
+  @JsonKey(name: "phone")
+  String? phone;
   @JsonKey(name: "chair_name")
   String chairName;
   @JsonKey(name: "food")
@@ -125,14 +166,30 @@ class Chair {
   String isMember;
   @JsonKey(name: "is_travel")
   String isTravel;
+  @JsonKey(name: "note")
+  String? note;
+  @JsonKey(name: "is_feed")
+  String? isFeed;
+  @JsonKey(name: "price_member")
+  int? priceMember;
+  @JsonKey(name: "price_feed")
+  int? priceFeed;
   @JsonKey(name: "price")
   int price;
 
   Chair({
+    this.orderDetailId,
+    this.name,
+    this.email,
+    this.phone,
     required this.chairName,
     required this.food,
     required this.isMember,
     required this.isTravel,
+    this.note,
+    this.isFeed,
+    this.priceMember,
+    this.priceFeed,
     required this.price,
   });
 
@@ -144,12 +201,15 @@ class Chair {
 @JsonSerializable()
 class Checkpoints {
   @JsonKey(name: "start")
-  End start;
+  Agency start;
+  @JsonKey(name: "destination")
+  Agency? destination;  // PENTING: Tambah field ini
   @JsonKey(name: "end")
-  End end;
+  Agency end;
 
   Checkpoints({
     required this.start,
+    this.destination,  // Optional karena kadang ada kadang ga
     required this.end,
   });
 
@@ -159,7 +219,7 @@ class Checkpoints {
 }
 
 @JsonSerializable()
-class End {
+class Agency {
   @JsonKey(name: "agency_id")
   int agencyId;
   @JsonKey(name: "agency_name")
@@ -169,26 +229,73 @@ class End {
   @JsonKey(name: "agency_phone")
   String agencyPhone;
   @JsonKey(name: "agency_lat")
-  dynamic agencyLat;
+  String? agencyLat;
   @JsonKey(name: "agency_lng")
-  dynamic agencyLng;
+  String? agencyLng;
   @JsonKey(name: "city_name")
   String cityName;
-  @JsonKey(name: "arrived_at")
-  dynamic arrivedAt;
 
-  End({
+  Agency({
     required this.agencyId,
     required this.agencyName,
     required this.agencyAddress,
     required this.agencyPhone,
-    required this.agencyLat,
-    required this.agencyLng,
+    this.agencyLat,
+    this.agencyLng,
     required this.cityName,
-    required this.arrivedAt,
   });
 
-  factory End.fromJson(Map<String, dynamic> json) => _$EndFromJson(json);
+  factory Agency.fromJson(Map<String, dynamic> json) => _$AgencyFromJson(json);
 
-  Map<String, dynamic> toJson() => _$EndToJson(this);
+  Map<String, dynamic> toJson() => _$AgencyToJson(this);
+}
+
+@JsonSerializable()
+class Payment {
+  @JsonKey(name: "id")
+  int id;
+  @JsonKey(name: "payment_type_id")
+  int paymentTypeId;
+  @JsonKey(name: "order_id")
+  int orderId;
+  @JsonKey(name: "secret_key")
+  String secretKey;
+  @JsonKey(name: "status")
+  String status;
+  @JsonKey(name: "expired_at")
+  String? expiredAt;
+  @JsonKey(name: "deleted_at")
+  String? deletedAt;
+  @JsonKey(name: "created_at")
+  String createdAt;
+  @JsonKey(name: "updated_at")
+  String updatedAt;
+  @JsonKey(name: "paid_at")
+  String? paidAt;
+  @JsonKey(name: "proof")
+  String? proof;
+  @JsonKey(name: "proof_decline_reason")
+  String? proofDeclineReason;
+  @JsonKey(name: "proof_url")
+  String? proofUrl;
+
+  Payment({
+    required this.id,
+    required this.paymentTypeId,
+    required this.orderId,
+    required this.secretKey,
+    required this.status,
+    this.expiredAt,
+    this.deletedAt,
+    required this.createdAt,
+    required this.updatedAt,
+    this.paidAt,
+    this.proof,
+    this.proofDeclineReason,
+    this.proofUrl,
+  });
+
+  factory Payment.fromJson(Map<String, dynamic> json) => _$PaymentFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PaymentToJson(this);
 }
