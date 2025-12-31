@@ -178,6 +178,77 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<HttpResponse<ExchangeTicketModel>> exchangeTicket({
+    required String codeOrder,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'code_order': codeOrder};
+    final _options = _setStreamType<HttpResponse<ExchangeTicketModel>>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'application/x-www-form-urlencoded',
+      )
+          .compose(
+            _dio.options,
+            '/agen/exchange_ticket',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ExchangeTicketModel _value;
+    try {
+      _value = ExchangeTicketModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<ConfirmExchangeTicketModel>> confirmExchangeTicket({
+    required int orderId,
+    required String codeOrder,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'order_id': orderId, 'code_order': codeOrder};
+    final _options = _setStreamType<HttpResponse<ConfirmExchangeTicketModel>>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'application/x-www-form-urlencoded',
+      )
+          .compose(
+            _dio.options,
+            '/agen/exchange_ticket/confirm',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ConfirmExchangeTicketModel _value;
+    try {
+      _value = ConfirmExchangeTicketModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
   Future<HttpResponse<AboutUsModel>> about() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

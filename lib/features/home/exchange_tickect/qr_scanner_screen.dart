@@ -71,8 +71,17 @@ class _QrScannerScreenState extends State<QrScannerScreen>
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Izin kamera diperlukan untuk scan QR')),
+          SnackBar(
+            content: Text('Izin kamera diperlukan untuk scan QR'),
+            backgroundColor: Colors.red,
+          ),
         );
+
+        Future.delayed(Duration(seconds: 2), () {
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        });
       }
     }
   }
@@ -165,23 +174,27 @@ class _QrScannerScreenState extends State<QrScannerScreen>
       )
           : Stack(
         children: [
+
           Positioned.fill(
             child: MobileScanner(
               controller: cameraController,
               onDetect: (capture) {
                 if (_hasScanned) return;
+
                 _brightnessCheckCount++;
-                if (_brightnessCheckCount % 5 == 0 && capture.image != null) {
+                if (_brightnessCheckCount % 5 == 0 &&
+                    capture.image != null) {
                   _analyzeBrightnessFromImage(capture.image!);
                 }
 
                 final List<Barcode> barcodes = capture.barcodes;
                 if (barcodes.isNotEmpty) {
                   final String? code = barcodes.first.rawValue;
-                  if (code != null) {
+                  if (code != null && code.isNotEmpty) {
                     setState(() {
                       _hasScanned = true;
                     });
+
                     if (_isAutoTorchBlinking) {
                       _stopAutoTorchBlink();
                     }
@@ -192,6 +205,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               },
             ),
           ),
+
           Positioned.fill(
             child: CustomPaint(
               painter: ScannerOverlayPainter(
@@ -267,6 +281,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
               ),
             ),
           ),
+
           Positioned(
             top: 16,
             left: 16,
@@ -278,7 +293,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(12),
+                padding: EdgeInsets.all(padding12),
                 child: SvgPicture.asset(
                   _isDarkEnvironment
                       ? 'assets/icons/ic_scan_flash_on.svg'
@@ -322,7 +337,6 @@ class _QrScannerScreenState extends State<QrScannerScreen>
       if (bytes == null) return;
       int totalBrightness = 0;
       int sampleCount = 0;
-
       for (int i = 0; i < bytes.length; i += 300) {
         if (i + 2 < bytes.length) {
           int r = bytes[i];
@@ -342,6 +356,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
           setState(() {
             _isDarkEnvironment = isDark;
           });
+
           if (isDark && !_isTorchOn) {
             _startAutoTorchBlink();
           } else if (!isDark) {
@@ -350,6 +365,7 @@ class _QrScannerScreenState extends State<QrScannerScreen>
         }
       }
     } catch (e) {
+      debugPrint('Brightness analysis error: $e');
     }
   }
 }
