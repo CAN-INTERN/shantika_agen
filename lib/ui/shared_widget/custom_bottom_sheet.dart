@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../color.dart';
 import '../dimension.dart';
 import '../typography.dart';
@@ -10,7 +9,7 @@ class SelectionBottomSheet<T> extends StatefulWidget {
   final T? selectedItem;
   final Function(T) onItemSelected;
   final String Function(T) getItemName;
-  final String Function(T)? getItemId;
+  final String? Function(T)? getItemId; // Changed to nullable return type
   final String searchHint;
   final bool isLoading;
   final String? errorMessage;
@@ -73,10 +72,10 @@ class _SelectionBottomSheetState<T> extends State<SelectionBottomSheet<T>> {
         filteredItems = widget.items
             .where(
               (item) => widget
-                  .getItemName(item)
-                  .toLowerCase()
-                  .contains(query.toLowerCase()),
-            )
+              .getItemName(item)
+              .toLowerCase()
+              .contains(query.toLowerCase()),
+        )
             .toList();
       }
     });
@@ -137,8 +136,8 @@ class _SelectionBottomSheetState<T> extends State<SelectionBottomSheet<T>> {
             child: widget.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : widget.errorMessage != null
-                    ? _buildErrorView()
-                    : _buildItemList(),
+                ? _buildErrorView()
+                : _buildItemList(),
           ),
         ],
       ),
@@ -211,7 +210,7 @@ class _SelectionBottomSheetState<T> extends State<SelectionBottomSheet<T>> {
         final selectedId = widget.selectedItem != null
             ? widget.getItemId?.call(widget.selectedItem!)
             : null;
-        final isSelected = itemId == selectedId;
+        final isSelected = itemId != null && itemId == selectedId;
 
         return InkWell(
           onTap: () {
