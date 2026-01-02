@@ -7,9 +7,12 @@ import 'package:shantika_agen/ui/shared_widget/custom_text_form_field.dart';
 import 'package:shantika_agen/ui/color.dart';
 import 'package:shantika_agen/ui/typography.dart';
 import '../../model/agency_model.dart';
+import '../../model/fleet_class_model.dart';
 import '../../model/time_classification_model.dart';
 import '../../ui/shared_widget/custom_bottom_sheet.dart';
 import '../../ui/shared_widget/custom_card.dart';
+import '../../utility/extensions/date_time_extensions.dart';
+import '../../utility/extensions/show_toast.dart';
 import '../notification/notification_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'cubit/home_cubit.dart';
@@ -28,14 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _classController = TextEditingController();
 
-  final List<String> busClasses = [
-    'Executive',
-  ];
-
   DateTime? selectedDate;
   Agency? selectedAgency;
   Time? selectedTime;
-  String? selectedClass;
+  FleetClass? selectedFleetClass;
 
   @override
   void initState() {
@@ -66,29 +65,11 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         selectedDate = picked;
         String day = picked.day.toString().padLeft(2, '0');
-        String month = _getMonthName(picked.month);
+        String month = picked.month.toMonthName();
         String year = picked.year.toString();
         _dateController.text = '$day $month $year';
       });
     }
-  }
-
-  String _getMonthName(int month) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'Mei',
-      'Jun',
-      'Jul',
-      'Agu',
-      'Sep',
-      'Okt',
-      'Nov',
-      'Des'
-    ];
-    return months[month - 1];
   }
 
   @override
@@ -98,132 +79,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _timeController.dispose();
     _classController.dispose();
     super.dispose();
-  }
-
-  void _showDestinationBottomSheet() {
-    context.read<HomeCubit>().fetchAgencies();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => BlocBuilder<HomeCubit, HomeState>(
-        builder: (context, state) {
-          final isLoading = state is HomeLoading;
-          final isError = state is HomeError;
-          final agencies = state is HomeLoaded ? state.agencies : <Agency>[];
-          final errorMessage = isError ? (state as HomeError).message : null;
-
-          return SelectionBottomSheet<Agency>(
-            title: 'Pilih Tujuan',
-            items: agencies,
-            selectedItem: selectedAgency,
-            onItemSelected: (agency) {
-              if (mounted) {
-                setState(() {
-                  selectedAgency = agency;
-                  final agencyName = agency.agencyName ?? '';
-                  final cityName = agency.cityName ?? '';
-                  _destinationController.text = '$agencyName - $cityName';
-                });
-              }
-            },
-            getItemName: (agency) {
-              final agencyName = agency.agencyName ?? '';
-              final cityName = agency.cityName ?? '';
-              return '$agencyName - $cityName';
-            },
-            getItemId: (agency) => agency.id?.toString(),
-            searchHint: 'Cari Tujuan',
-            isLoading: isLoading,
-            errorMessage: errorMessage,
-            onRetry: () {
-              context.read<HomeCubit>().fetchAgencies();
-            },
-            showSearch: true,
-            emptyStateMessage: 'Tidak ada tujuan ditemukan',
-          );
-        },
-      ),
-    );
-  }
-
-  void _showTimeBottomSheet() {
-    context.read<HomeCubit>().fetchTimeClassifications();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => BlocBuilder<HomeCubit, HomeState>(
-        builder: (context, state) {
-          final isLoading = state is TimeClassificationLoading;
-          final isError = state is TimeClassificationError;
-          final timeClassifications = state is TimeClassificationLoaded
-              ? state.timeClassifications
-              : <Time>[];
-          final errorMessage =
-              isError ? (state as TimeClassificationError).message : null;
-
-          return SelectionBottomSheet<Time>(
-            title: 'Pilih Waktu',
-            items: timeClassifications,
-            selectedItem: selectedTime,
-            onItemSelected: (time) {
-              if (mounted) {
-                setState(() {
-                  selectedTime = time;
-                  final timeName = time.name ?? '';
-                  final timeStart = time.timeStart ?? '';
-                  _timeController.text = '$timeName $timeStart';
-                });
-              }
-            },
-            getItemName: (time) {
-              final timeName = time.name ?? '';
-              final timeStart = time.timeStart ?? '';
-              return '$timeName $timeStart WIB';
-            },
-            getItemId: (time) => time.id?.toString(),
-            searchHint: 'Cari Waktu',
-            isLoading: isLoading,
-            errorMessage: errorMessage,
-            onRetry: () {
-              context.read<HomeCubit>().fetchTimeClassifications();
-            },
-            showSearch: false,
-            emptyStateMessage: 'Tidak ada waktu tersedia',
-          );
-        },
-      ),
-    );
-  }
-
-  void _showClassBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => SelectionBottomSheet<String>(
-        title: 'Pilih Kelas Armada',
-        items: busClasses,
-        selectedItem: selectedClass,
-        onItemSelected: (busClass) {
-          if (mounted) {
-            setState(() {
-              selectedClass = busClass;
-              _classController.text = busClass;
-            });
-          }
-        },
-        getItemName: (busClass) => busClass,
-        getItemId: (busClass) => busClass,
-        searchHint: 'Cari Armada',
-        isLoading: false,
-        showSearch: true,
-        emptyStateMessage: 'Tidak ada kelas tersedia',
-      ),
-    );
   }
 
   @override
@@ -341,6 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
             titleSection: 'Tempat Tujuan',
             controller: _destinationController,
             placeholder: 'Pilih Tempat Tujuan',
+            readOnly: true,
             titleStyle: smRegular.copyWith(color: black950),
             placeholderStyle: smRegular.copyWith(color: black950),
             onTap: _showDestinationBottomSheet,
@@ -354,6 +210,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   titleSection: 'Tanggal Keberangkatan',
                   controller: _dateController,
                   placeholder: 'Pilih Tanggal',
+                  maxLines: 1,
+                  readOnly: true,
                   titleStyle: smRegular.copyWith(color: black950),
                   placeholderStyle: smRegular.copyWith(color: black950),
                   onTap: () => _selectDate(context),
@@ -366,6 +224,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   titleSection: 'Waktu Berangkat',
                   controller: _timeController,
                   placeholder: 'Pilih Waktu',
+                  readOnly: true,
+                  maxLines: 1,
                   titleStyle: smRegular.copyWith(color: black950),
                   placeholderStyle: smRegular.copyWith(color: black950),
                   onTap: _showTimeBottomSheet,
@@ -378,6 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
             titleSection: 'Kelas Keberangkatan',
             controller: _classController,
             placeholder: 'Pilih Armada',
+            readOnly: true,
             titleStyle: smRegular.copyWith(color: black950),
             placeholderStyle: smRegular.copyWith(color: black950),
             onTap: _showClassBottomSheet,
@@ -447,6 +308,207 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showDestinationBottomSheet() {
+    context.read<HomeCubit>().fetchAgencies();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          final isLoading = state is HomeLoading;
+          final isError = state is HomeError;
+          final agencies = state is HomeLoaded ? state.agencies : <Agency>[];
+          final errorMessage = isError ? (state as HomeError).message : null;
+
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: SelectionBottomSheet<Agency>(
+              title: 'Pilih Tujuan',
+              items: agencies,
+              selectedItem: selectedAgency,
+              onItemSelected: (agency) {
+                if (mounted) {
+                  setState(() {
+                    selectedAgency = agency;
+                    final agencyName = agency.agencyName ?? '';
+                    final cityName = agency.cityName ?? '';
+                    _destinationController.text = '$agencyName - $cityName';
+                    selectedFleetClass = null;
+                    _classController.clear();
+                  });
+                }
+              },
+              getItemName: (agency) {
+                final agencyName = agency.agencyName ?? '';
+                final cityName = agency.cityName ?? '';
+                return '$agencyName - $cityName';
+              },
+              getItemId: (agency) => agency.id?.toString(),
+              searchHint: 'Cari Tujuan',
+              isLoading: isLoading,
+              errorMessage: errorMessage,
+              onRetry: () {
+                context.read<HomeCubit>().fetchAgencies();
+              },
+              showSearch: true,
+              emptyStateMessage: 'Tidak ada tujuan ditemukan',
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showTimeBottomSheet() {
+    context.read<HomeCubit>().fetchTimeClassifications();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          final isLoading = state is TimeClassificationLoading;
+          final isError = state is TimeClassificationError;
+          final timeClassifications = state is TimeClassificationLoaded
+              ? state.timeClassifications
+              : <Time>[];
+          final errorMessage =
+          isError ? (state as TimeClassificationError).message : null;
+
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: SelectionBottomSheet<Time>(
+              title: 'Pilih Waktu',
+              items: timeClassifications,
+              selectedItem: selectedTime,
+              onItemSelected: (time) {
+                if (mounted) {
+                  setState(() {
+                    selectedTime = time;
+                    final timeName = time.name ?? '';
+                    final timeStart = (time.timeStart ?? '').formatTimeStart();
+                    _timeController.text = '$timeName $timeStart';
+
+                    selectedFleetClass = null;
+                    _classController.clear();
+                  });
+                }
+              },
+              getItemName: (time) {
+                final timeName = time.name ?? '';
+                final timeStart = (time.timeStart ?? '').formatTimeStart();
+                return '$timeName $timeStart WIB';
+              },
+              getItemId: (time) => time.id?.toString(),
+              searchHint: 'Cari Waktu',
+              isLoading: isLoading,
+              errorMessage: errorMessage,
+              onRetry: () {
+                context.read<HomeCubit>().fetchTimeClassifications();
+              },
+              showSearch: false,
+              emptyStateMessage: 'Tidak ada waktu tersedia',
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showClassBottomSheet() {
+    if (selectedAgency == null) {
+      context.showCustomToast(
+        title: 'Perhatian',
+        message: 'Silakan pilih tempat tujuan terlebih dahulu',
+        isSuccess: false,
+      );
+      return;
+    }
+
+    if (selectedDate == null) {
+      context.showCustomToast(
+        title: 'Perhatian',
+        message: 'Silakan pilih tanggal keberangkatan terlebih dahulu',
+        isSuccess: false,
+      );
+      return;
+    }
+
+    if (selectedTime == null) {
+      context.showCustomToast(
+        title: 'Perhatian',
+        message: 'Silakan pilih waktu berangkat terlebih dahulu',
+        isSuccess: false,
+      );
+      return;
+    }
+
+    context.read<HomeCubit>().fetchAvailableFleetClasses(
+      agencyId: selectedAgency!.id ?? 0,
+      timeClassificationId: selectedTime!.id ?? 0,
+      date: selectedDate!.toApiFormat(),
+    );
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          final isLoading = state is FleetClassLoading;
+          final isError = state is FleetClassError;
+          final fleetClasses =
+          state is FleetClassLoaded ? state.fleetClasses : <FleetClass>[];
+          final errorMessage =
+          isError ? (state as FleetClassError).message : null;
+
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: SelectionBottomSheet<FleetClass>(
+              title: 'Pilih Kelas Armada',
+              items: fleetClasses,
+              selectedItem: selectedFleetClass,
+              onItemSelected: (fleetClass) {
+                if (mounted) {
+                  setState(() {
+                    selectedFleetClass = fleetClass;
+                    _classController.text = fleetClass.name ?? '';
+                  });
+                }
+              },
+              getItemName: (fleetClass) {
+                final name = fleetClass.name ?? '';
+                return '$name';
+              },
+              getItemId: (fleetClass) => fleetClass.id?.toString(),
+              searchHint: 'Cari Armada',
+              isLoading: isLoading,
+              errorMessage: errorMessage,
+              onRetry: () {
+                context.read<HomeCubit>().fetchAvailableFleetClasses(
+                  agencyId: selectedAgency!.id ?? 0,
+                  timeClassificationId: selectedTime!.id ?? 0,
+                  date: selectedDate!.toApiFormat(),
+                );
+              },
+              showSearch: true,
+              emptyStateMessage: 'Tidak ada kelas armada tersedia',
+            ),
+          );
+        },
       ),
     );
   }

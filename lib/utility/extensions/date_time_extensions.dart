@@ -85,24 +85,99 @@ extension DateTimeExtensions on DateTime {
     return this;
   }
 
-  // DayOfWeek get dayOfWeek {
-  //   switch (weekday) {
-  //     case DateTime.monday:
-  //       return DayOfWeek.monday;
-  //     case DateTime.tuesday:
-  //       return DayOfWeek.tuesday;
-  //     case DateTime.wednesday:
-  //       return DayOfWeek.wednesday;
-  //     case DateTime.thursday:
-  //       return DayOfWeek.thursday;
-  //     case DateTime.friday:
-  //       return DayOfWeek.friday;
-  //     case DateTime.saturday:
-  //       return DayOfWeek.saturday;
-  //     case DateTime.sunday:
-  //       return DayOfWeek.sunday;
-  //     default:
-  //       throw Exception("Invalid day of week");
-  //   }
-  // }
+  /// Formats DateTime to API format: "yyyy-MM-dd"
+  /// Example: DateTime(2025, 12, 31) -> "2025-12-31"
+  String toApiFormat() {
+    String year = this.year.toString();
+    String month = this.month.toString().padLeft(2, '0');
+    String day = this.day.toString().padLeft(2, '0');
+    return '$year-$month-$day';
+  }
+
+// DayOfWeek get dayOfWeek {
+//   switch (weekday) {
+//     case DateTime.monday:
+//       return DayOfWeek.monday;
+//     case DateTime.tuesday:
+//       return DayOfWeek.tuesday;
+//     case DateTime.wednesday:
+//       return DayOfWeek.wednesday;
+//     case DateTime.thursday:
+//       return DayOfWeek.thursday;
+//     case DateTime.friday:
+//       return DayOfWeek.friday;
+//     case DateTime.saturday:
+//       return DayOfWeek.saturday;
+//     case DateTime.sunday:
+//       return DayOfWeek.sunday;
+//     default:
+//       throw Exception("Invalid day of week");
+//   }
+// }
+}
+
+extension StringExtensions on String {
+  /// Formats time string from "HH:mm:ss" to "HH:mm"
+  /// Example: "07:00:00" -> "07:00"
+  String formatTimeStart() {
+    if (isEmpty) return '';
+
+    try {
+      // Parse the time string (format: "HH:mm:ss")
+      final parts = split(':');
+      if (parts.length >= 2) {
+        // Return only hours and minutes (HH:mm)
+        return '${parts[0]}:${parts[1]}';
+      }
+      return this;
+    } catch (e) {
+      return this;
+    }
+  }
+}
+
+extension IntExtensions on int {
+  /// Converts month number (1-12) to Indonesian month name (full)
+  /// Example: 1 -> "Januari", 5 -> "Mei", 12 -> "Desember"
+  String toMonthName() {
+    const months = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember'
+    ];
+
+    if (this < 1 || this > 12) return '';
+    return months[this - 1];
+  }
+
+  /// Converts month number (1-12) to Indonesian month abbreviation
+  /// Example: 1 -> "Jan", 5 -> "Mei", 12 -> "Des"
+  String toMonthNameShort() {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'Mei',
+      'Jun',
+      'Jul',
+      'Agu',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Des'
+    ];
+
+    if (this < 1 || this > 12) return '';
+    return months[this - 1];
+  }
 }
