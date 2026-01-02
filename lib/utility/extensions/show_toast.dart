@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../config/constant.dart';
 import '../../ui/color.dart';
 import '../../ui/dimension.dart';
@@ -22,24 +21,17 @@ extension ToastExtension on BuildContext {
         backgroundColor: Colors.transparent,
         elevation: 0,
         margin: EdgeInsets.only(
-          bottom: MediaQuery.of(this).size.height * (position == SnackBarPosition.top ? 0.75 : 0.10),
+          top: 0,
+          bottom: 4,
           left: 16,
           right: 16,
-          top: kToolbarHeight,
-        ),
-        animation: CurvedAnimation(
-          parent: AnimationController(
-            vsync: Scaffold.of(this),
-            duration: const Duration(milliseconds: 300),
-          )..forward(),
-          curve: Curves.easeOut,
         ),
         content: CustomCardSecondary(
           useShadow: false,
-          leftColor: isSuccess ? iconInfo : iconDanger,
+          leftColor: isSuccess ? successColor : iconDanger,
           child: Container(
             decoration: BoxDecoration(
-              color: isSuccess ? bgSurfaceInfo : bgSurfaceDanger,
+              color: isSuccess ? bgHoverSuccess : bgSurfaceDanger,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(10),
                 bottomLeft: Radius.circular(10),
@@ -54,24 +46,37 @@ extension ToastExtension on BuildContext {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SvgPicture.asset('assets/images/ic_info.svg', color: isSuccess ? iconInfo : iconDanger),
-                  const SizedBox(width: space200),
+                  SvgPicture.asset(
+                    'assets/images/ic_info.svg',
+                    color: isSuccess ? successColor : iconDanger,
+                  ),
+                  SizedBox(width: space200),
                   Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(title, style: smMedium.copyWith(color: isSuccess ? iconInfo : iconDanger)),
+                        Text(
+                          title,
+                          style: smMedium.copyWith(
+                            color: isSuccess ? successColor : iconDanger,
+                          ),
+                        ),
                         Text(
                           maxLines: 5,
                           overflow: TextOverflow.ellipsis,
                           message,
-                          style: xsRegular.copyWith(color: isSuccess ? iconInfo : iconDanger),
+                          style: xsRegular.copyWith(
+                            color: isSuccess ? successColor : iconDanger,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  SvgPicture.asset('assets/images/ic_close_circle.svg', color: isSuccess ? iconInfo : iconDanger),
+                  SvgPicture.asset(
+                    'assets/images/ic_close_circle.svg',
+                    color: isSuccess ? successColor : iconDanger,
+                  ),
                 ],
               ),
             ),

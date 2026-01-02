@@ -11,6 +11,7 @@ import 'package:shantika_agen/model/user_model.dart';
 import '../../config/constant.dart';
 import '../../model/about_us_model.dart';
 import '../../model/agency_model.dart';
+import '../../model/fleet_class_model.dart';
 import '../../model/confirm_exchange_ticket_model.dart';
 import '../../model/exchange_ticket_model.dart';
 
@@ -22,15 +23,19 @@ abstract class ApiService {
 
   /// Login Google
   @POST("/agen/login/email")
-  Future<HttpResponse<UserModel>> loginWithEmail(@Body() Map<String, dynamic> body);
+  Future<HttpResponse<UserModel>> loginWithEmail(
+      @Body() Map<String, dynamic> body);
 
   /// Login Phone
   @POST("/agen/login/phone")
-  Future<HttpResponse<UserModel>> loginWithPhone(@Body() Map<String, dynamic> body);
+  Future<HttpResponse<UserModel>> loginWithPhone(
+      @Body() Map<String, dynamic> body);
 
   /// Update Profile (Upload Avatar)
   @POST("/agen/update")
-  Future<HttpResponse<UserModel>> updateProfile(@Part(name: 'avatar') File? avatar,);
+  Future<HttpResponse<UserModel>> updateProfile(
+    @Part(name: 'avatar') File? avatar,
+  );
 
   /// Get Profile
   @GET("/agen/profile")
@@ -78,4 +83,12 @@ abstract class ApiService {
   /// Get Time
   @GET("/time")
   Future<HttpResponse<TimeClassificationModel>> getTimeClassification();
+
+  @GET("/fleet_classes/available")
+  Future<HttpResponse<FleetClassModel>> getAvailableFleetClasses(
+    @Query("agency_id") int agencyId,
+    @Query("time_classification_id") int timeClassificationId,
+    @Query("date") String date,
+  );
 }
+

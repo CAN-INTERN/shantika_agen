@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/agency_model.dart';
 import '../../../model/time_classification_model.dart';
+import '../../../model/fleet_class_model.dart';
 import '../../../repository/home_repository.dart';
 import 'home_state.dart';
 
@@ -8,6 +9,7 @@ class HomeCubit extends Cubit<HomeState> {
   final HomeRepository _repository;
   List<Agency> _allAgencies = [];
   List<Time> _allTimeClassifications = [];
+  List<FleetClass> _allFleetClasses = [];
 
   HomeCubit(this._repository) : super(HomeInitial());
 
@@ -16,7 +18,7 @@ class HomeCubit extends Cubit<HomeState> {
       emit(HomeLoading());
       final agencies = await _repository.getAgencies();
 
-      if (isClosed) return; // Add this check
+      if (isClosed) return;
 
       if (agencies.isNotEmpty) {
         _allAgencies = agencies;
@@ -25,14 +27,14 @@ class HomeCubit extends Cubit<HomeState> {
         emit(const HomeError('No agencies available'));
       }
     } catch (e) {
-      if (!isClosed) { // Add this check
+      if (!isClosed) {
         emit(HomeError(e.toString()));
       }
     }
   }
 
   void searchAgencies(String query) {
-    if (_allAgencies.isEmpty || isClosed) return; // Add isClosed check
+    if (_allAgencies.isEmpty || isClosed) return;
 
     if (query.isEmpty) {
       emit(HomeLoaded(_allAgencies));
@@ -58,7 +60,7 @@ class HomeCubit extends Cubit<HomeState> {
       emit(TimeClassificationLoading());
       final timeClassifications = await _repository.getTimeClassification();
 
-      if (isClosed) return; // Add this check
+      if (isClosed) return;
 
       if (timeClassifications.isNotEmpty) {
         _allTimeClassifications = timeClassifications;
@@ -67,14 +69,14 @@ class HomeCubit extends Cubit<HomeState> {
         emit(const TimeClassificationError('No time classifications available'));
       }
     } catch (e) {
-      if (!isClosed) { // Add this check
+      if (!isClosed) {
         emit(TimeClassificationError(e.toString()));
       }
     }
   }
 
   void searchTimeClassifications(String query) {
-    if (_allTimeClassifications.isEmpty || isClosed) return; // Add isClosed check
+    if (_allTimeClassifications.isEmpty || isClosed) return;
 
     if (query.isEmpty) {
       emit(TimeClassificationLoaded(_allTimeClassifications));
@@ -92,5 +94,62 @@ class HomeCubit extends Cubit<HomeState> {
 
   Future<void> refreshTimeClassifications() async {
     await fetchTimeClassifications();
+  }
+
+  Future<void> fetchAvailableFleetClasses({
+    required int agencyId,
+    required int timeClassificationId,
+    required String date,
+  }) async {
+    try {
+      emit(FleetClassLoading());
+      final fleetClasses = await _repository.getAvailableFleetClasses(
+        agencyId: agencyId,
+        timeClassificationId: timeClassificationId,
+        date: date,
+      );
+
+      if (isClosed) return;
+
+      if (fleetClasses.isNotEmpty) {
+        _allFleetClasses = fleetClasses;
+        emit(FleetClassLoaded(fleetClasses));
+      } else {
+        emit(const FleetClassError('No fleet classes available'));
+      }
+    } catch (e) {
+      if (!isClosed) {
+        emit(FleetClassError(e.toString()));
+      }
+    }
+  }
+
+  void searchFleetClasses(String query) {
+    if (_allFleetClasses.isEmpty || isClosed) return;
+
+    if (query.isEmpty) {
+      emit(FleetClassLoaded(_allFleetClasses));
+    } else {
+      final filtered = _allFleetClasses.where((fleetClass) {
+        final className = (fleetClass.name ?? '').toLowerCase();
+        final searchLower = query.toLowerCase();
+
+        return className.contains(searchLower);
+      }).toList();
+
+      emit(FleetClassLoaded(filtered));
+    }
+  }
+
+  Future<void> refreshFleetClasses({
+    required int agencyId,
+    required int timeClassificationId,
+    required String date,
+  }) async {
+    await fetchAvailableFleetClasses(
+      agencyId: agencyId,
+      timeClassificationId: timeClassificationId,
+      date: date,
+    );
   }
 }
