@@ -6,9 +6,11 @@ import 'package:shantika_agen/model/chat_model.dart';
 import 'package:shantika_agen/model/faq_model.dart';
 import 'package:shantika_agen/model/privacy_policy_model.dart';
 import 'package:shantika_agen/model/terms_condition_model.dart';
+import 'package:shantika_agen/model/time_classification_model.dart';
 import 'package:shantika_agen/model/user_model.dart';
 import '../../config/constant.dart';
 import '../../model/about_us_model.dart';
+import '../../model/agency_model.dart';
 import '../../model/confirm_exchange_ticket_model.dart';
 import '../../model/exchange_ticket_model.dart';
 
@@ -68,4 +70,12 @@ abstract class ApiService {
   /// Privacy Policy
   @GET("/privacy_policy")
   Future<HttpResponse<PrivacyPolicyModel>> privacyPolicy();
+
+  /// Get Agencies
+  @GET("/customer/agencies")
+  Future<HttpResponse<AgencyModel>> getAgencies();
+
+  /// Get Time
+  @GET("/time")
+  Future<HttpResponse<TimeClassificationModel>> getTimeClassification();
 }

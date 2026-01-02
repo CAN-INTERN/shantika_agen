@@ -7,19 +7,19 @@ import '../../../model/exchange_ticket_model.dart';
 import 'cubit/exchange_ticket_cubit.dart';
 import 'cubit/exchange_ticket_state.dart';
 
-class DetailTicket extends StatefulWidget {
+class DetailTicketScreen extends StatefulWidget {
   final String bookingCode;
 
-  const DetailTicket({
+  const DetailTicketScreen({
     super.key,
     required this.bookingCode,
   });
 
   @override
-  State<DetailTicket> createState() => _DetailTicketState();
+  State<DetailTicketScreen> createState() => _DetailTicketScreenState();
 }
 
-class _DetailTicketState extends State<DetailTicket> {
+class _DetailTicketScreenState extends State<DetailTicketScreen> {
   @override
   void initState() {
     super.initState();

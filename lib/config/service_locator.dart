@@ -6,7 +6,6 @@ import 'package:get_it/get_it.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shantika_agen/config/user_preference.dart';
 import 'package:shantika_agen/repository/about_us_repository.dart';
-import 'package:shantika_agen/repository/exchange_ticket_repository.dart';
 import 'package:shantika_agen/repository/faq_repository.dart';
 import 'package:shantika_agen/repository/privacy_policy_repository.dart';
 import 'package:shantika_agen/repository/profile_repository.dart';
@@ -14,6 +13,8 @@ import 'package:shantika_agen/repository/terms_condition_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/api/api_service.dart';
 import '../repository/chat_repository.dart';
+import '../repository/exchange_ticket_repository.dart';
+import '../repository/home_repository.dart';
 import '../utility/auth_interceptor.dart';
 import 'constant.dart';
 import 'env/env.dart';
@@ -83,7 +84,11 @@ Future<void> setUpLocator(GlobalKey<NavigatorState> navigatorKey) async {
         () => ProfileRepository(serviceLocator<ApiService>()),
   );
 
- serviceLocator.registerLazySingleton<ExchangeTicketRepository>(
+  serviceLocator.registerLazySingleton<HomeRepository>(
+        () => HomeRepository(serviceLocator<ApiService>()),
+  );
+
+  serviceLocator.registerLazySingleton<ExchangeTicketRepository>(
         () => ExchangeTicketRepository(serviceLocator<ApiService>()),
   );
 

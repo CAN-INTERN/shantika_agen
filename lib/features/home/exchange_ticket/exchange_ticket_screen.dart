@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shantika_agen/features/home/exchange_tickect/qr_scanner_screen.dart';
-import 'package:shantika_agen/features/home/exchange_tickect/detail_ticket.dart';
+import 'package:shantika_agen/features/home/exchange_ticket/detail_ticket_screen.dart';
+import 'package:shantika_agen/features/home/exchange_ticket/qr_scanner_screen.dart';
 import 'package:shantika_agen/ui/color.dart';
 import 'package:shantika_agen/ui/typography.dart';
 import '../../../ui/shared_widget/custom_arrow.dart';
@@ -55,7 +55,7 @@ class _ExchangeTicketScreenState extends State<ExchangeTicketScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DetailTicket(
+        builder: (context) => DetailTicketScreen(
           bookingCode: code,
         ),
       ),
