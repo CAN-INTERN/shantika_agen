@@ -23,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.shantika_agen"
-        minSdkVersion = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdkVersion = 23
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled true

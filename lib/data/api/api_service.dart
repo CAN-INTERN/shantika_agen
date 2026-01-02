@@ -12,6 +12,8 @@ import '../../config/constant.dart';
 import '../../model/about_us_model.dart';
 import '../../model/agency_model.dart';
 import '../../model/fleet_class_model.dart';
+import '../../model/confirm_exchange_ticket_model.dart';
+import '../../model/exchange_ticket_model.dart';
 
 part 'api_service.g.dart';
 
@@ -42,6 +44,21 @@ abstract class ApiService {
   /// Chat
   @GET("/agen/chats")
   Future<HttpResponse<ChatModel>> getChats();
+
+  /// Exchange Ticket - Check Order by Code
+  @POST("/agen/exchange_ticket")
+  @FormUrlEncoded()
+  Future<HttpResponse<ExchangeTicketModel>> exchangeTicket({
+    @Field("code_order") required String codeOrder,
+  });
+
+  /// Exchange Ticket - Confirm Exchange
+  @POST("/agen/exchange_ticket/confirm")
+  @FormUrlEncoded()
+  Future<HttpResponse<ConfirmExchangeTicketModel>> confirmExchangeTicket({
+    @Field("order_id") required int orderId,
+    @Field("code_order") required String codeOrder,
+  });
 
   /// About Us
   @GET("/about_us")

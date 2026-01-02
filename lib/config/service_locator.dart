@@ -13,6 +13,7 @@ import 'package:shantika_agen/repository/terms_condition_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../data/api/api_service.dart';
 import '../repository/chat_repository.dart';
+import '../repository/exchange_ticket_repository.dart';
 import '../repository/home_repository.dart';
 import '../utility/auth_interceptor.dart';
 import 'constant.dart';
@@ -85,6 +86,10 @@ Future<void> setUpLocator(GlobalKey<NavigatorState> navigatorKey) async {
 
   serviceLocator.registerLazySingleton<HomeRepository>(
         () => HomeRepository(serviceLocator<ApiService>()),
+  );
+
+  serviceLocator.registerLazySingleton<ExchangeTicketRepository>(
+        () => ExchangeTicketRepository(serviceLocator<ApiService>()),
   );
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();

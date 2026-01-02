@@ -4,12 +4,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shantika_agen/features/chat/cubit/chat_cubit.dart';
 import 'package:shantika_agen/features/home/cubit/home_cubit.dart';
+import 'package:shantika_agen/features/home/exchange_ticket/cubit/exchange_ticket_cubit.dart';
 import 'package:shantika_agen/features/profile/about%20us/cubit/about_us_cubit.dart';
 import 'package:shantika_agen/features/profile/faq/cubit/faq_cubit.dart';
 import 'package:shantika_agen/features/profile/privacy_policy/cubit/privacy_policy_cubit.dart';
 import 'package:shantika_agen/features/profile/terms%20and%20condition/cubit/terms_condition_cubit.dart';
 import 'package:shantika_agen/repository/about_us_repository.dart';
 import 'package:shantika_agen/repository/chat_repository.dart';
+import 'package:shantika_agen/repository/exchange_ticket_repository.dart';
 import 'package:shantika_agen/repository/faq_repository.dart';
 import 'package:shantika_agen/repository/home_repository.dart';
 import 'package:shantika_agen/repository/privacy_policy_repository.dart';
@@ -57,6 +59,14 @@ class MyApp extends StatelessWidget {
         }),
         BlocProvider(create: (context) => UpdateFcmTokenCubit()),
 
+        /// Home
+        BlocProvider(
+          create: (context) => HomeCubit(serviceLocator<HomeRepository>()),
+        ),
+
+        BlocProvider(
+            create: (context) => ExchangeTicketCubit(serviceLocator<ExchangeTicketRepository>())),
+
         /// Chat
         BlocProvider(
             create: (context) => ChatCubit(serviceLocator<ChatRepository>())),
@@ -78,10 +88,6 @@ class MyApp extends StatelessWidget {
             create: (context) =>
                 PrivacyPolicyCubit(serviceLocator<PrivacyPolicyRepository>())),
 
-        /// Home
-        BlocProvider(
-          create: (context) => HomeCubit(serviceLocator<HomeRepository>()),
-        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
