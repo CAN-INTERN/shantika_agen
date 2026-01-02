@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "500904762182-sd5cuq91qd9m5qe022mmd6solbhujvb9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shantika_agen",
+            "certificate_hash": "047348fd49a217b34a5480323d0df1d644cfad5d"
+          }
+        },
+        {
           "client_id": "500904762182-jtm626vdflpn4jufct6kva125m6pmtp8.apps.googleusercontent.com",
           "client_type": 3
         }
