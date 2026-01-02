@@ -91,3 +91,4 @@ abstract class ApiService {
     @Query("date") String date,
   );
 }
+
